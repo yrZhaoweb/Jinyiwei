@@ -26,7 +26,7 @@ describe("i18n", () => {
     setLocale("en");
     assert.strictEqual(
       t("install.error.workspaceNotExist", { path: "/tmp/test" }),
-      "Error: workspace does not exist: /tmp/test"
+      "Workspace does not exist: /tmp/test"
     );
   });
 

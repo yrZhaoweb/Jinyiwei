@@ -9,37 +9,37 @@ import { statusCommand } from "../lib/commands/status.mjs";
 import { installCommand } from "../lib/commands/install.mjs";
 import { uninstallCommand } from "../lib/commands/uninstall.mjs";
 import { initCommand } from "../lib/commands/init.mjs";
+import * as log from "../lib/log.mjs";
 
 const pkg = JSON.parse(fs.readFileSync(resolve("package.json"), "utf8"));
 
-function buildUsage() {
-  return `
-jinyiwei v${pkg.version} — ${t("cli.description")}
-
-${t("cli.usage")}
-  jinyiwei install <workspace>   ${t("cli.commands.install")}
-  jinyiwei uninstall             ${t("cli.commands.uninstall")}
-  jinyiwei validate              ${t("cli.commands.validate")}
-  jinyiwei sync                  ${t("cli.commands.sync")}
-  jinyiwei status                ${t("cli.commands.status")}
-  jinyiwei init                  ${t("cli.commands.init")}
-  jinyiwei help                  ${t("cli.commands.help")}
-
-Install options:
-  --dry-run        ${t("cli.options.dryRun")}
-  --skip-plugin    ${t("cli.options.skipPlugin")}
-  --skip-skills    ${t("cli.options.skipSkills")}
-  --copy           ${t("cli.options.copy")}
-  --fail-fast      ${t("cli.options.failFast")}
-  --json           ${t("cli.options.json")}
-
-Examples:
-  npx @yrzhao/jinyiwei install /path/to/openclaw/workspace
-  npx @yrzhao/jinyiwei install /path/to/workspace --dry-run
-  npx @yrzhao/jinyiwei uninstall
-  npx @yrzhao/jinyiwei validate
-  npx @yrzhao/jinyiwei init
-`.trim();
+function printHelp() {
+  log.banner(pkg.version);
+  console.log(`  ${log.bold(t("cli.usage"))}`);
+  console.log();
+  console.log(`    ${log.cyan("jinyiwei install")} ${log.dim("<workspace>")}   ${t("cli.commands.install")}`);
+  console.log(`    ${log.cyan("jinyiwei uninstall")}             ${t("cli.commands.uninstall")}`);
+  console.log(`    ${log.cyan("jinyiwei validate")}              ${t("cli.commands.validate")}`);
+  console.log(`    ${log.cyan("jinyiwei sync")}                  ${t("cli.commands.sync")}`);
+  console.log(`    ${log.cyan("jinyiwei status")}                ${t("cli.commands.status")}`);
+  console.log(`    ${log.cyan("jinyiwei init")}                  ${t("cli.commands.init")}`);
+  console.log(`    ${log.cyan("jinyiwei help")}                  ${t("cli.commands.help")}`);
+  console.log();
+  console.log(`  ${log.bold("Install options:")}`);
+  console.log();
+  console.log(`    ${log.yellow("--dry-run")}        ${t("cli.options.dryRun")}`);
+  console.log(`    ${log.yellow("--skip-plugin")}    ${t("cli.options.skipPlugin")}`);
+  console.log(`    ${log.yellow("--skip-skills")}    ${t("cli.options.skipSkills")}`);
+  console.log(`    ${log.yellow("--copy")}           ${t("cli.options.copy")}`);
+  console.log(`    ${log.yellow("--fail-fast")}      ${t("cli.options.failFast")}`);
+  console.log(`    ${log.yellow("--json")}           ${t("cli.options.json")}`);
+  console.log();
+  console.log(`  ${log.bold("Examples:")}`);
+  console.log();
+  console.log(`    ${log.dim("$")} jinyiwei install /path/to/openclaw/workspace`);
+  console.log(`    ${log.dim("$")} jinyiwei install /path/to/workspace --dry-run`);
+  console.log(`    ${log.dim("$")} jinyiwei init`);
+  console.log();
 }
 
 /**
@@ -57,8 +57,16 @@ function runScript(script, args = []) {
 
 const [command, ...args] = process.argv.slice(2);
 
-if (!command || command === "help" || command === "--help" || command === "-h") {
-  console.log(buildUsage());
+if (command === "help" || command === "--help" || command === "-h") {
+  printHelp();
+  process.exit(ExitCode.OK);
+}
+
+if (!command) {
+  log.banner(pkg.version);
+  console.log(`  ${log.symbols.arrow} ${t("banner.quickStart")}`);
+  console.log(`  ${log.symbols.info} ${t("banner.noCommand")}`);
+  console.log();
   process.exit(ExitCode.OK);
 }
 
@@ -96,8 +104,10 @@ switch (command) {
     break;
 
   default:
-    console.error(t("error.unknown", { command }) + "\n");
-    console.log(buildUsage());
+    log.banner(pkg.version);
+    log.fail(t("error.unknown", { command }));
+    console.log(`  ${log.symbols.info} ${t("banner.noCommand")}`);
+    console.log();
     exitCode = ExitCode.USER_ERROR;
     break;
 }

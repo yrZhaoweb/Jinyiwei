@@ -1,11 +1,19 @@
 {
   "name": "@yrzhao/jinyiwei",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "type": "module",
   "description": "OpenClaw governance plugin and markdown charter pack.",
   "license": "MIT",
   "engines": {
     "node": ">=18"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yrzhao/Jinyiwei.git"
+  },
+  "homepage": "https://github.com/yrzhao/Jinyiwei#readme",
+  "bugs": {
+    "url": "https://github.com/yrzhao/Jinyiwei/issues"
   },
   "keywords": [
     "openclaw",

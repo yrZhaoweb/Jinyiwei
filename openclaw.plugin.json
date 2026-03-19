@@ -1,7 +1,7 @@
 {
   "id": "jinyiwei",
   "name": "Jinyiwei",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Governance, supervision, and markdown-controlled agent hierarchy for OpenClaw.",
   "skills": [
     "skills/jinyiwei-governance"
