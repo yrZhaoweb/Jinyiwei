@@ -35,6 +35,7 @@ Before dispatching or approving any task, load these charters:
 
 Then load these rules:
 
+- `{baseDir}/../../rules/addressing.md`
 - `{baseDir}/../../rules/channel-access.md`
 - `{baseDir}/../../rules/md-control.md`
 - `{baseDir}/../../rules/dispatch.md`
@@ -61,4 +62,3 @@ Then load these rules:
 ## Skills Bootstrap
 
 Jinyiwei must treat `{baseDir}/../../manifests/preinstalled-skills.json` as the install manifest generated from `skills_list.md`. During bootstrap, install that manifest's skills into the OpenClaw workspace.
-

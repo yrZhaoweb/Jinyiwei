@@ -7,7 +7,8 @@
   "scripts": {
     "sync:skills": "node ./scripts/sync-skills-manifest.mjs",
     "validate": "node ./scripts/validate-jinyiwei.mjs",
-    "install:openclaw": "node ./scripts/install-openclaw.mjs"
+    "install:openclaw": "node ./scripts/install-openclaw.mjs",
+    "install:dry-run": "node ./scripts/install-openclaw.mjs --dry-run"
   },
   "openclaw": {
     "extensions": [
@@ -15,4 +16,3 @@
     ]
   }
 }
-

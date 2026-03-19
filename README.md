@@ -35,6 +35,18 @@ Dry-run the generated install plan:
 node ./scripts/install-openclaw.mjs --dry-run --workspace /path/to/openclaw/workspace
 ```
 
+Install only the plugin:
+
+```bash
+node ./scripts/install-openclaw.mjs --workspace /path/to/openclaw/workspace --skip-skills
+```
+
+Fail immediately on the first install error:
+
+```bash
+node ./scripts/install-openclaw.mjs --workspace /path/to/openclaw/workspace --fail-fast
+```
+
 Refresh the skills manifest from `skills_list.md`:
 
 ```bash
@@ -52,10 +64,21 @@ node ./scripts/validate-jinyiwei.mjs
 - Boss enters through `ChatAgent` or `WatchAgent`
 - `WatchAgent` must approve every action
 - internal agents may not address Boss directly
+- `ChatAgent` and `WatchAgent` must call the user `Boss`
+- `WatchAgent` must call itself `锦衣卫`
 - every action must be justified by markdown control files
 - installing Jinyiwei also installs the skills listed in `skills_list.md`
 
 ## Preinstalled Skills
 
 The root file `skills_list.md` is parsed into `manifests/preinstalled-skills.json`. The current list contains 48 skills and is installed during OpenClaw bootstrap.
+
+## Validation
+
+`node ./scripts/validate-jinyiwei.mjs` checks:
+
+- required plugin, skill, charter, and rule files exist
+- `skills_list.md` matches `manifests/preinstalled-skills.json`
+- plugin defaults still enforce `Boss`, `锦衣卫`, and external channel lockdown
+- agent charters still respect external-only and internal-only boundaries
 
