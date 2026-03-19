@@ -1,0 +1,60 @@
+{
+  "id": "jinyiwei",
+  "name": "Jinyiwei",
+  "version": "0.2.0",
+  "description": "Governance, supervision, and markdown-controlled agent hierarchy for OpenClaw.",
+  "skills": [
+    "skills/jinyiwei-governance"
+  ],
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "bossTitle": {
+        "type": "string",
+        "default": "Boss"
+      },
+      "watchSelfTitle": {
+        "type": "string",
+        "default": "锦衣卫"
+      },
+      "externalIngressAgents": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "enum": [
+            "ChatAgent",
+            "WatchAgent"
+          ]
+        },
+        "default": [
+          "ChatAgent",
+          "WatchAgent"
+        ]
+      },
+      "externalChannels": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "enum": [
+            "feishu",
+            "telegram"
+          ]
+        },
+        "default": [
+          "feishu",
+          "telegram"
+        ]
+      },
+      "autoInstallListedSkills": {
+        "type": "boolean",
+        "default": true
+      },
+      "listedSkillsManifest": {
+        "type": "string",
+        "default": "manifests/preinstalled-skills.json"
+      }
+    }
+  }
+}
+
