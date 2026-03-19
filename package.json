@@ -1,14 +1,43 @@
 {
-  "name": "jinyiwei",
-  "version": "0.2.0",
-  "private": true,
+  "name": "@yrzhao/jinyiwei",
+  "version": "0.3.0",
   "type": "module",
   "description": "OpenClaw governance plugin and markdown charter pack.",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "openclaw",
+    "governance",
+    "agent",
+    "plugin",
+    "jinyiwei"
+  ],
+  "bin": {
+    "jinyiwei": "./bin/jinyiwei.mjs"
+  },
+  "files": [
+    "bin/",
+    "lib/",
+    "agents/",
+    "manifests/",
+    "openclaw-plugin.js",
+    "openclaw.plugin.json",
+    "rules/",
+    "scripts/",
+    "skills/",
+    "skills_list.md",
+    "templates/"
+  ],
   "scripts": {
     "sync:skills": "node ./scripts/sync-skills-manifest.mjs",
+    "sync:version": "node ./scripts/sync-version.mjs",
     "validate": "node ./scripts/validate-jinyiwei.mjs",
+    "test": "node --test test/*.test.mjs",
     "install:openclaw": "node ./scripts/install-openclaw.mjs",
-    "install:dry-run": "node ./scripts/install-openclaw.mjs --dry-run"
+    "install:dry-run": "node ./scripts/install-openclaw.mjs --dry-run",
+    "prepublishOnly": "node ./scripts/sync-version.mjs && node ./scripts/sync-skills-manifest.mjs && node ./scripts/validate-jinyiwei.mjs"
   },
   "openclaw": {
     "extensions": [

@@ -1,6 +1,6 @@
 # Rejection Rule
 
-`WatchAgent` must reject an action when:
+`WatchAgent` must reject an action using `templates/rejection-decision.md` when:
 
 - the acting agent is outside its charter
 - the action lacks a clear rationale

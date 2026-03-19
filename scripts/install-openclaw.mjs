@@ -1,11 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
-import { fileURLToPath } from "node:url";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const root = path.resolve(__dirname, "..");
+import { root, resolve } from "../lib/paths.mjs";
 
 function hasCommand(command) {
   const result = spawnSync("sh", ["-lc", `command -v ${command}`], {
@@ -53,6 +49,7 @@ function parseArgs(argv) {
     skipPlugin: false,
     skipSkills: false,
     failFast: false,
+    json: false,
     workspace: null
   };
 
@@ -78,6 +75,10 @@ function parseArgs(argv) {
       options.failFast = true;
       continue;
     }
+    if (arg === "--json") {
+      options.json = true;
+      continue;
+    }
     if (arg === "--workspace") {
       const value = argv[index + 1];
       if (!value) {
@@ -93,23 +94,75 @@ function parseArgs(argv) {
   return options;
 }
 
-function stopIfNeeded(report, result, failFast) {
+function stopIfNeeded(report, result, failFast, jsonMode) {
   if (!failFast || result.ok) {
     return;
   }
 
   report.summary.failed = true;
-  console.log(JSON.stringify(report, null, 2));
+  if (jsonMode) {
+    console.log(JSON.stringify(report, null, 2));
+  } else {
+    printReport(report);
+  }
   process.exit(1);
 }
 
-const options = parseArgs(process.argv.slice(2));
-const validation = run("node", [path.join(root, "scripts", "validate-jinyiwei.mjs")]);
+function mark(ok, dryRun) {
+  if (dryRun) return "[dry-run]";
+  return ok ? "OK" : "FAILED";
+}
 
-const manifest = JSON.parse(fs.readFileSync(path.join(root, "manifests", "preinstalled-skills.json"), "utf8"));
+function printReport(report) {
+  const s = report.summary;
+  const prefix = s.mode === "dry-run" ? "[dry-run] " : "";
+
+  // Validation
+  if (report.validation) {
+    console.log(`${prefix}Validation:     ${mark(report.validation.ok, report.validation.dryRun)}`);
+  }
+
+  // Plugin
+  if (report.pluginInstall) {
+    const method = report.pluginInstall.command?.includes("-l") ? "symlink" : "copy";
+    console.log(`${prefix}Plugin install:  ${mark(report.pluginInstall.ok, report.pluginInstall.dryRun)} (${method})`);
+  }
+  if (report.pluginEnable) {
+    console.log(`${prefix}Plugin enable:   ${mark(report.pluginEnable.ok, report.pluginEnable.dryRun)}`);
+  }
+
+  // Skills
+  if (s.skippedSkills > 0) {
+    console.log(`${prefix}Skills:          skipped (${s.skippedSkills})`);
+  } else if (report.skills.length > 0) {
+    console.log(`${prefix}Skills:          ${s.successfulSkills}/${s.requestedSkills} installed`);
+    if (s.failedSkills > 0) {
+      const failed = report.skills.filter((r) => !r.ok);
+      for (const f of failed) {
+        const reason = f.missing
+          ? `command not found: ${f.missing}`
+          : f.stderr?.trim() || `exit code ${f.status}`;
+        console.log(`  FAILED: ${f.skill} — ${reason}`);
+      }
+    }
+  }
+
+  // Summary
+  console.log();
+  if (s.failed) {
+    console.log(`${prefix}Result: FAILED`);
+  } else {
+    console.log(`${prefix}Result: OK`);
+  }
+}
+
+const options = parseArgs(process.argv.slice(2));
+const validation = run("node", [resolve("scripts/validate-jinyiwei.mjs")]);
+
+const manifest = JSON.parse(fs.readFileSync(resolve("manifests/preinstalled-skills.json"), "utf8"));
 const report = {
   workspace: options.workspace,
-  manifestPath: path.join(root, "manifests", "preinstalled-skills.json"),
+  manifestPath: resolve("manifests/preinstalled-skills.json"),
   validation,
   pluginInstall: null,
   pluginEnable: null,
@@ -124,7 +177,7 @@ const report = {
   }
 };
 
-stopIfNeeded(report, validation, options.failFast);
+stopIfNeeded(report, validation, options.failFast, options.json);
 
 if (!options.skipPlugin) {
   report.pluginInstall = run(
@@ -132,12 +185,12 @@ if (!options.skipPlugin) {
     ["plugins", "install", ...(options.copyMode ? [] : ["-l"]), root],
     { dryRun: options.dryRun }
   );
-  stopIfNeeded(report, report.pluginInstall, options.failFast);
+  stopIfNeeded(report, report.pluginInstall, options.failFast, options.json);
 
   report.pluginEnable = run("openclaw", ["plugins", "enable", "jinyiwei"], {
     dryRun: options.dryRun
   });
-  stopIfNeeded(report, report.pluginEnable, options.failFast);
+  stopIfNeeded(report, report.pluginEnable, options.failFast, options.json);
 }
 
 if (!options.skipSkills) {
@@ -151,7 +204,7 @@ if (!options.skipSkills) {
       };
       report.skills.push(result);
       report.summary.failedSkills += 1;
-      stopIfNeeded(report, result, options.failFast);
+      stopIfNeeded(report, result, options.failFast, options.json);
       continue;
     }
 
@@ -165,7 +218,7 @@ if (!options.skipSkills) {
       report.summary.successfulSkills += 1;
     } else {
       report.summary.failedSkills += 1;
-      stopIfNeeded(report, result, options.failFast);
+      stopIfNeeded(report, result, options.failFast, options.json);
     }
   }
 } else {
@@ -181,4 +234,12 @@ if (
   report.summary.failed = true;
 }
 
-console.log(JSON.stringify(report, null, 2));
+if (options.json) {
+  console.log(JSON.stringify(report, null, 2));
+} else {
+  printReport(report);
+}
+
+if (report.summary.failed) {
+  process.exit(1);
+}

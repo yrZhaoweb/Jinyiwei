@@ -1,81 +1,177 @@
 # Jinyiwei
 
-Jinyiwei is an OpenClaw-only governance plugin and markdown charter pack.
+[![npm version](https://img.shields.io/npm/v/@yrzhao/jinyiwei.svg)](https://www.npmjs.com/package/@yrzhao/jinyiwei)
+[![CI](https://github.com/yrzhao/Jinyiwei/actions/workflows/validate.yml/badge.svg)](https://github.com/yrzhao/Jinyiwei/actions)
+[![license](https://img.shields.io/npm/l/@yrzhao/jinyiwei.svg)](./LICENSE)
+[![node](https://img.shields.io/node/v/@yrzhao/jinyiwei.svg)](./package.json)
 
-Its job is to configure OpenClaw with a strict hierarchy:
+[中文文档](./README.zh-CN.md)
 
-- `ChatAgent` and `WatchAgent` are the only Boss-facing agents
-- both `ChatAgent` and `WatchAgent` must call the user `Boss`
-- `WatchAgent` must call itself `锦衣卫`
-- only `ChatAgent` and `WatchAgent` may connect to Feishu, Telegram, or other Boss-facing channels
-- all other agents are internal-only and governed by markdown charters
+> Governance, supervision, and markdown-controlled agent hierarchy for OpenClaw.
+
+## Why Jinyiwei?
+
+Multi-agent systems without governance quickly become chaotic — agents talk to users freely, bypass approval, and make unauditable decisions. **Jinyiwei** (锦衣卫, the imperial secret police) solves this by enforcing a strict, auditable hierarchy:
+
+- **Single entry point** — only `ChatAgent` and `WatchAgent` face the Boss (user)
+- **Mandatory approval** — every action passes through `WatchAgent` before execution
+- **Risk-graded control** — a hybrid approval matrix auto-approves low-risk work and escalates high-risk actions
+- **Full audit trail** — every dispatch, approval, rejection, and result is logged with structured templates
+- **Markdown-as-code** — all governance rules, agent charters, and templates are plain markdown files, version-controlled and validated by CI
+
+## Architecture
+
+```mermaid
+graph TD
+    Boss["Boss (User)"]
+
+    Boss <-->|Feishu / Telegram| ChatAgent
+    Boss <-->|Feishu / Telegram| WatchAgent
+
+    ChatAgent -->|dispatch packet| WatchAgent
+    WatchAgent -->|approve / reject| ChatAgent
+
+    WatchAgent -.->|approve| CodeAgent
+    WatchAgent -.->|approve| UIAgent
+    WatchAgent -.->|approve| ReviewAgent
+    WatchAgent -.->|approve| TestAgent
+
+    CodeAgent -->|response| ChatAgent
+    UIAgent -->|response| ChatAgent
+    ReviewAgent -->|response| ChatAgent
+    TestAgent -->|response| ChatAgent
+
+    style Boss fill:#f9d71c,stroke:#333
+    style ChatAgent fill:#4a9eff,stroke:#333,color:#fff
+    style WatchAgent fill:#ff4a4a,stroke:#333,color:#fff
+    style CodeAgent fill:#eee,stroke:#999
+    style UIAgent fill:#eee,stroke:#999
+    style ReviewAgent fill:#eee,stroke:#999
+    style TestAgent fill:#eee,stroke:#999
+```
+
+## Quick Start
+
+Install globally:
+
+```bash
+npm install -g @yrzhao/jinyiwei
+jinyiwei install /path/to/openclaw/workspace
+```
+
+Or use without installing:
+
+```bash
+npx @yrzhao/jinyiwei install /path/to/openclaw/workspace
+```
+
+## CLI Commands
+
+```
+jinyiwei install <workspace>   Install Jinyiwei into an OpenClaw workspace
+jinyiwei uninstall             Uninstall Jinyiwei plugin from OpenClaw
+jinyiwei validate              Validate all governance files
+jinyiwei sync                  Sync skills_list.md -> preinstalled-skills.json
+jinyiwei status                Show plugin status and governance summary
+jinyiwei init                  Interactive governance configuration
+jinyiwei help                  Show help
+```
+
+Install options:
+
+```
+--dry-run        Show what would be done without making changes
+--skip-plugin    Skip plugin install/enable steps
+--skip-skills    Skip skill installation
+--copy           Copy plugin files instead of symlinking
+--fail-fast      Stop on first error
+--json           Output machine-readable JSON
+```
+
+Examples:
+
+```bash
+jinyiwei install /path/to/workspace --dry-run    # preview changes
+jinyiwei install /path/to/workspace --skip-skills # plugin only
+jinyiwei uninstall                                # remove plugin
+jinyiwei validate                                 # check governance integrity
+jinyiwei status                                   # show current config
+jinyiwei init                                     # configure interactively
+```
+
+## Configuration
+
+Jinyiwei is configured via `openclaw.plugin.json`. Run `jinyiwei init` for interactive setup, or edit the file directly:
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `bossTitle` | `string` | `"Boss"` | How agents address the user |
+| `watchSelfTitle` | `string` | `"锦衣卫"` | How WatchAgent introduces itself to Boss |
+| `approvalMode` | `string` | `"hybrid"` | Approval policy: `strict`, `graded`, or `hybrid` |
+| `externalIngressAgents` | `string[]` | `["ChatAgent", "WatchAgent"]` | Agents allowed to access external channels |
+| `externalChannels` | `string[]` | `["feishu", "telegram"]` | Allowed external communication channels |
+| `autoInstallListedSkills` | `boolean` | `true` | Auto-install skills from the manifest on bootstrap |
+| `listedSkillsManifest` | `string` | `"manifests/preinstalled-skills.json"` | Path to the skills install manifest |
+
+### Localization
+
+Set `JINYIWEI_LANG=zh` for Chinese CLI output, or `JINYIWEI_LANG=en` for English (default).
 
 ## Project Layout
 
-- `openclaw.plugin.json`: OpenClaw plugin manifest
-- `openclaw-plugin.js`: plugin runtime entry
-- `skills/jinyiwei-governance/SKILL.md`: top-level governance skill
-- `agents/*/AGENT.md`: per-agent charter files
-- `rules/*.md`: global enforcement rules
-- `templates/dispatch-packet.md`: standard ChatAgent dispatch packet
-- `templates/approval-decision.md`: standard WatchAgent approval output
-- `templates/responses/*.md`: standard internal-agent response templates
-- `skills_list.md`: source list of bundled skills
-- `manifests/preinstalled-skills.json`: generated install manifest
-- `scripts/install.sh`: install Jinyiwei into OpenClaw
-
-## Install Into OpenClaw
-
-Install the plugin and auto-install the listed skills into an OpenClaw workspace:
-
-```bash
-./scripts/install.sh /path/to/openclaw/workspace
 ```
-
-Dry-run the generated install plan:
-
-```bash
-node ./scripts/install-openclaw.mjs --dry-run --workspace /path/to/openclaw/workspace
-```
-
-Install only the plugin:
-
-```bash
-node ./scripts/install-openclaw.mjs --workspace /path/to/openclaw/workspace --skip-skills
-```
-
-Fail immediately on the first install error:
-
-```bash
-node ./scripts/install-openclaw.mjs --workspace /path/to/openclaw/workspace --fail-fast
-```
-
-Refresh the skills manifest from `skills_list.md`:
-
-```bash
-node ./scripts/sync-skills-manifest.mjs
-```
-
-Validate the required markdown and manifest files:
-
-```bash
-node ./scripts/validate-jinyiwei.mjs
+bin/jinyiwei.mjs                  CLI entry point (slim dispatcher)
+lib/
+  commands/                       CLI command modules
+    install.mjs                   install command
+    uninstall.mjs                 uninstall command
+    status.mjs                    status command
+    init.mjs                      interactive init command
+  validators/                     Modular validation logic
+    files.mjs                     Required file checks
+    skills.mjs                    Skills manifest sync check
+    plugin.mjs                    Plugin config defaults check
+    charters.mjs                  Agent charter validations
+    rules.mjs                     Rule file validations
+    templates.mjs                 Template field validations
+  i18n.mjs                        i18n entry (en / zh)
+  i18n/en.mjs                     English locale
+  i18n/zh.mjs                     Chinese locale
+  exit-codes.mjs                  Standard exit codes
+  paths.mjs                       Shared path resolution
+  parse-skills.mjs                skills_list.md parser
+openclaw.plugin.json              OpenClaw plugin manifest
+openclaw-plugin.js                Plugin runtime entry
+skills/jinyiwei-governance/       Top-level governance skill
+agents/*/AGENT.md                 Per-agent charter files
+rules/*.md                        Global enforcement rules
+templates/                        Structured output templates
+  dispatch-packet.md              ChatAgent dispatch packet
+  approval-decision.md            WatchAgent approval output
+  rejection-decision.md           WatchAgent rejection output
+  audit-entry.md                  Audit log entry
+  responses/*.md                  Internal agent response templates
+skills_list.md                    Source list of bundled skills
+manifests/preinstalled-skills.json  Generated install manifest
+test/                             Unit tests (node:test)
 ```
 
 ## Governance Rules
 
 - Boss enters through `ChatAgent` or `WatchAgent`
 - `WatchAgent` must approve every action
-- internal agents may not address Boss directly
+- Internal agents may not address Boss directly
 - `ChatAgent` and `WatchAgent` must call the user `Boss`
 - `WatchAgent` must call itself `锦衣卫`
-- approval policy is `hybrid`: channel and permission violations are hard-blocked, ordinary work is risk-graded
+- Approval policy is `hybrid`: channel and permission violations are hard-blocked, ordinary work is risk-graded
 - `WatchAgent` uses an action catalog to classify concrete actions before approval
 - `ChatAgent` must dispatch work with the standard dispatch packet template
 - `WatchAgent` must respond with the standard approval decision template
-- every internal agent must return work with its own response template
-- every action must be justified by markdown control files
-- installing Jinyiwei also installs the skills listed in `skills_list.md`
+- `WatchAgent` must issue rejections with the standard rejection decision template
+- Every action must be logged with the standard audit entry template
+- Every internal agent must return work with its own response template
+- Every action must be justified by markdown control files
+- Installing Jinyiwei also installs the skills listed in `skills_list.md`
 
 ## Preinstalled Skills
 
@@ -83,11 +179,32 @@ The root file `skills_list.md` is parsed into `manifests/preinstalled-skills.jso
 
 ## Validation
 
-`node ./scripts/validate-jinyiwei.mjs` checks:
+`jinyiwei validate` checks:
 
-- required plugin, skill, charter, and rule files exist
+- Required plugin, skill, charter, rule, and template files exist
 - `skills_list.md` matches `manifests/preinstalled-skills.json`
-- plugin defaults still enforce `Boss`, `锦衣卫`, `approvalMode=hybrid`, and external channel lockdown
-- action catalog and dispatch packet template remain present and referenced by rules
-- approval and internal response templates remain present and referenced by rules
-- agent charters still respect external-only and internal-only boundaries
+- Plugin defaults still enforce `Boss`, `锦衣卫`, `approvalMode=hybrid`, and external channel lockdown
+- Action catalog and dispatch packet template remain present and referenced by rules
+- Approval, rejection, audit, and internal response templates remain present and referenced by rules
+- Agent charters still respect external-only and internal-only boundaries
+
+## Development
+
+```bash
+npm test                # run unit tests
+npm run validate        # run governance validation
+npm run sync:skills     # sync skills_list.md -> manifest
+npm run sync:version    # sync version to openclaw.plugin.json
+```
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make changes — governance files are validated by CI
+4. Run `npm test && npm run validate`
+5. Open a pull request
+
+## License
+
+MIT

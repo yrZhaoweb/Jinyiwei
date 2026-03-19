@@ -15,6 +15,14 @@ Required fields:
 - `required_follow_up`
 - `reported_to_boss`
 
+## Rejection Decisions
+
+`WatchAgent` must issue rejection decisions using `templates/rejection-decision.md`.
+
+## Audit Entries
+
+Every action must be logged using `templates/audit-entry.md`.
+
 ## Internal Agent Responses
 
 Each internal agent must use its assigned template:
@@ -30,4 +38,3 @@ Each internal agent must use its assigned template:
 - every internal response must identify the `source_agent`
 - every internal response must list `handoff_to`
 - every internal response must be auditable by `WatchAgent`
-

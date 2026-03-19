@@ -1,6 +1,8 @@
 # Audit Rule
 
-Every action must have:
+Every action must be logged using `templates/audit-entry.md`.
+
+Required fields:
 
 - acting agent
 - requested action
