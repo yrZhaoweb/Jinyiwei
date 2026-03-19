@@ -66,6 +66,7 @@ node ./scripts/validate-jinyiwei.mjs
 - internal agents may not address Boss directly
 - `ChatAgent` and `WatchAgent` must call the user `Boss`
 - `WatchAgent` must call itself `锦衣卫`
+- approval policy is `hybrid`: channel and permission violations are hard-blocked, ordinary work is risk-graded
 - every action must be justified by markdown control files
 - installing Jinyiwei also installs the skills listed in `skills_list.md`
 
@@ -79,6 +80,5 @@ The root file `skills_list.md` is parsed into `manifests/preinstalled-skills.jso
 
 - required plugin, skill, charter, and rule files exist
 - `skills_list.md` matches `manifests/preinstalled-skills.json`
-- plugin defaults still enforce `Boss`, `锦衣卫`, and external channel lockdown
+- plugin defaults still enforce `Boss`, `锦衣卫`, `approvalMode=hybrid`, and external channel lockdown
 - agent charters still respect external-only and internal-only boundaries
-

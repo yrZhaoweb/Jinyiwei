@@ -18,6 +18,15 @@
         "type": "string",
         "default": "锦衣卫"
       },
+      "approvalMode": {
+        "type": "string",
+        "enum": [
+          "strict",
+          "graded",
+          "hybrid"
+        ],
+        "default": "hybrid"
+      },
       "externalIngressAgents": {
         "type": "array",
         "items": {
@@ -57,4 +66,3 @@
     }
   }
 }
-
