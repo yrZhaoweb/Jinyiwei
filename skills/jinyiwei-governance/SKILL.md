@@ -36,6 +36,7 @@ Before dispatching or approving any task, load these charters:
 Then load these rules:
 
 - `{baseDir}/../../rules/addressing.md`
+- `{baseDir}/../../rules/action-catalog.md`
 - `{baseDir}/../../rules/approval-matrix.md`
 - `{baseDir}/../../rules/channel-access.md`
 - `{baseDir}/../../rules/md-control.md`
@@ -48,10 +49,11 @@ Then load these rules:
 
 1. Boss enters through `ChatAgent` or `WatchAgent`
 2. `ChatAgent` structures the request
-3. `WatchAgent` approves or blocks each action using the hybrid approval matrix
-4. Internal agents execute only after approval
-5. Results return through `ChatAgent`
-6. Boss receives progress and exceptions only from `ChatAgent` or `WatchAgent`
+3. `ChatAgent` emits a dispatch packet using the standard template
+4. `WatchAgent` classifies the action using the action catalog and approves or blocks it with the hybrid approval matrix
+5. Internal agents execute only after approval
+6. Results return through `ChatAgent`
+7. Boss receives progress and exceptions only from `ChatAgent` or `WatchAgent`
 
 ## Default Internal Team
 

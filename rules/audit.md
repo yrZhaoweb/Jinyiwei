@@ -4,6 +4,8 @@ Every action must have:
 
 - acting agent
 - requested action
+- action type
+- packet id
 - risk level
 - rationale
 - supervising decision

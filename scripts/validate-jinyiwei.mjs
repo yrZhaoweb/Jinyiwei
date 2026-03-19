@@ -18,6 +18,7 @@ const requiredFiles = [
   "agents/test/AGENT.md",
   "agents/ui/AGENT.md",
   "rules/addressing.md",
+  "rules/action-catalog.md",
   "rules/approval-matrix.md",
   "rules/channel-access.md",
   "rules/md-control.md",
@@ -25,6 +26,7 @@ const requiredFiles = [
   "rules/audit.md",
   "rules/rejection.md",
   "rules/preinstalled-skills.md",
+  "templates/dispatch-packet.md",
   "skills_list.md",
   "manifests/preinstalled-skills.json"
 ];
@@ -88,8 +90,11 @@ const internalCharters = [
   readText("agents/ui/AGENT.md")
 ];
 const addressingRule = readText("rules/addressing.md");
+const actionCatalogRule = readText("rules/action-catalog.md");
 const approvalMatrixRule = readText("rules/approval-matrix.md");
 const channelRule = readText("rules/channel-access.md");
+const dispatchRule = readText("rules/dispatch.md");
+const dispatchTemplate = readText("templates/dispatch-packet.md");
 
 assert(Array.isArray(manifest.skills) && manifest.skills.length > 0, "preinstalled-skills.json has no skills", errors);
 assert(
@@ -113,10 +118,15 @@ assert(
 assert(governanceSkill.includes("`Boss`"), "governance skill must require Boss addressing", errors);
 assert(governanceSkill.includes("`锦衣卫`"), "governance skill must require 锦衣卫 self-title", errors);
 assert(governanceSkill.includes("rules/addressing.md"), "governance skill must load rules/addressing.md", errors);
+assert(governanceSkill.includes("rules/action-catalog.md"), "governance skill must load rules/action-catalog.md", errors);
 assert(governanceSkill.includes("rules/approval-matrix.md"), "governance skill must load rules/approval-matrix.md", errors);
 assert(governanceSkill.includes("hybrid approval matrix"), "governance skill must reference hybrid approval matrix", errors);
+assert(governanceSkill.includes("dispatch packet"), "governance skill must require dispatch packets", errors);
 assert(chatCharter.includes("`Boss`"), "ChatAgent charter must require Boss addressing", errors);
 assert(chatCharter.includes("externally reachable"), "ChatAgent charter must remain externally reachable", errors);
+assert(chatCharter.includes("standard dispatch packet"), "ChatAgent charter must require standard dispatch packets", errors);
+assert(chatCharter.includes("templates/dispatch-packet.md"), "ChatAgent charter must reference templates/dispatch-packet.md", errors);
+assert(chatCharter.includes("`action_type`"), "ChatAgent charter must require action_type in packets", errors);
 assert(watchCharter.includes("`Boss`"), "WatchAgent charter must require Boss addressing", errors);
 assert(watchCharter.includes("`锦衣卫`"), "WatchAgent charter must require 锦衣卫 self-title", errors);
 assert(watchCharter.includes("externally reachable"), "WatchAgent charter must remain externally reachable", errors);
@@ -132,6 +142,10 @@ for (const charter of internalCharters) {
 
 assert(addressingRule.includes("`Boss`"), "addressing rule must include Boss naming", errors);
 assert(addressingRule.includes("`锦衣卫`"), "addressing rule must include 锦衣卫 naming", errors);
+assert(actionCatalogRule.includes("`channel.receive_boss_message`"), "action catalog must include channel.receive_boss_message", errors);
+assert(actionCatalogRule.includes("`dispatch.send_to_internal_agent`"), "action catalog must include dispatch.send_to_internal_agent", errors);
+assert(actionCatalogRule.includes("`charter.change_agent_md`"), "action catalog must include charter.change_agent_md", errors);
+assert(actionCatalogRule.includes("Any `action_type` not listed here must be rejected"), "action catalog must reject unknown action types", errors);
 assert(approvalMatrixRule.includes("`hybrid`"), "approval matrix rule must declare hybrid mode", errors);
 assert(approvalMatrixRule.includes("### Low Risk"), "approval matrix rule must define low risk", errors);
 assert(approvalMatrixRule.includes("### Medium Risk"), "approval matrix rule must define medium risk", errors);
@@ -141,6 +155,26 @@ assert(channelRule.includes("`ChatAgent`"), "channel access rule must include Ch
 assert(channelRule.includes("`WatchAgent`"), "channel access rule must include WatchAgent", errors);
 assert(channelRule.includes("Feishu"), "channel access rule must include Feishu", errors);
 assert(channelRule.includes("Telegram"), "channel access rule must include Telegram", errors);
+assert(dispatchRule.includes("templates/dispatch-packet.md"), "dispatch rule must require dispatch template", errors);
+assert(dispatchRule.includes("rules/action-catalog.md"), "dispatch rule must require action catalog", errors);
+for (const field of [
+  "`packet_id`",
+  "`requested_by`",
+  "`target_agent`",
+  "`action_type`",
+  "`risk_hint`",
+  "`goal`",
+  "`scope`",
+  "`inputs`",
+  "`constraints`",
+  "`expected_outputs`",
+  "`approval_route`",
+  "`audit_requirements`",
+  "`fallback_on_reject`"
+]) {
+  assert(dispatchRule.includes(field), `dispatch rule must require field ${field}`, errors);
+  assert(dispatchTemplate.includes(field), `dispatch template must include field ${field}`, errors);
+}
 
 if (errors.length > 0) {
   console.error(

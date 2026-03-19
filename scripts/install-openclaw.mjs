@@ -173,6 +173,7 @@ if (!options.skipSkills) {
 }
 
 if (
+  !validation.ok ||
   (report.pluginInstall && !report.pluginInstall.ok) ||
   (report.pluginEnable && !report.pluginEnable.ok) ||
   report.summary.failedSkills > 0
