@@ -42,7 +42,7 @@
     "sync:skills": "node ./scripts/sync-skills-manifest.mjs",
     "sync:version": "node ./scripts/sync-version.mjs",
     "validate": "node ./scripts/validate-jinyiwei.mjs",
-    "test": "node --test test/*.test.mjs",
+    "test": "node --test --test-concurrency=1 test/*.test.mjs",
     "install:openclaw": "node ./scripts/install-openclaw.mjs",
     "install:dry-run": "node ./scripts/install-openclaw.mjs --dry-run",
     "prepublishOnly": "node ./scripts/sync-version.mjs && node ./scripts/sync-skills-manifest.mjs && node ./scripts/validate-jinyiwei.mjs"

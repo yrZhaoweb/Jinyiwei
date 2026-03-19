@@ -1,14 +1,15 @@
 #!/usr/bin/env node
 
 import fs from "node:fs";
-import { spawnSync } from "node:child_process";
-import { root, resolve } from "../lib/paths.mjs";
+import { resolve } from "../lib/paths.mjs";
 import { t } from "../lib/i18n.mjs";
 import { ExitCode } from "../lib/exit-codes.mjs";
 import { statusCommand } from "../lib/commands/status.mjs";
 import { installCommand } from "../lib/commands/install.mjs";
 import { uninstallCommand } from "../lib/commands/uninstall.mjs";
 import { initCommand } from "../lib/commands/init.mjs";
+import { validateCommand } from "../lib/commands/validate.mjs";
+import { syncCommand } from "../lib/commands/sync.mjs";
 import * as log from "../lib/log.mjs";
 
 const pkg = JSON.parse(fs.readFileSync(resolve("package.json"), "utf8"));
@@ -25,7 +26,7 @@ function printHelp() {
   console.log(`    ${log.cyan("jinyiwei init")}                  ${t("cli.commands.init")}`);
   console.log(`    ${log.cyan("jinyiwei help")}                  ${t("cli.commands.help")}`);
   console.log();
-  console.log(`  ${log.bold("Install options:")}`);
+  console.log(`  ${log.bold(t("cli.installOptions"))}`);
   console.log();
   console.log(`    ${log.yellow("--dry-run")}        ${t("cli.options.dryRun")}`);
   console.log(`    ${log.yellow("--skip-plugin")}    ${t("cli.options.skipPlugin")}`);
@@ -34,25 +35,12 @@ function printHelp() {
   console.log(`    ${log.yellow("--fail-fast")}      ${t("cli.options.failFast")}`);
   console.log(`    ${log.yellow("--json")}           ${t("cli.options.json")}`);
   console.log();
-  console.log(`  ${log.bold("Examples:")}`);
+  console.log(`  ${log.bold(t("cli.examples"))}`);
   console.log();
   console.log(`    ${log.dim("$")} jinyiwei install /path/to/openclaw/workspace`);
   console.log(`    ${log.dim("$")} jinyiwei install /path/to/workspace --dry-run`);
   console.log(`    ${log.dim("$")} jinyiwei init`);
   console.log();
-}
-
-/**
- * @param {string} script
- * @param {string[]} args
- * @returns {number}
- */
-function runScript(script, args = []) {
-  const result = spawnSync(process.execPath, [script, ...args], {
-    cwd: root,
-    stdio: "inherit",
-  });
-  return result.status ?? 1;
 }
 
 const [command, ...args] = process.argv.slice(2);
@@ -80,15 +68,15 @@ let exitCode;
 
 switch (command) {
   case "validate":
-    exitCode = runScript(resolve("scripts/validate-jinyiwei.mjs"));
+    exitCode = validateCommand(args);
     break;
 
   case "sync":
-    exitCode = runScript(resolve("scripts/sync-skills-manifest.mjs"));
+    exitCode = syncCommand();
     break;
 
   case "status":
-    exitCode = statusCommand();
+    exitCode = statusCommand(args);
     break;
 
   case "install":

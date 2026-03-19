@@ -2,10 +2,11 @@ import fs from "node:fs";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
 import { root, resolve } from "../lib/paths.mjs";
+import { t } from "../lib/i18n.mjs";
 
-function hasCommand(command) {
-  const result = spawnSync("sh", ["-lc", `command -v ${command}`], {
-    stdio: "ignore"
+function hasCommand(cmd) {
+  const result = spawnSync("which", [cmd], {
+    stdio: "ignore",
   });
   return result.status === 0;
 }
@@ -109,40 +110,40 @@ function stopIfNeeded(report, result, failFast, jsonMode) {
 }
 
 function mark(ok, dryRun) {
-  if (dryRun) return "[dry-run]";
-  return ok ? "OK" : "FAILED";
+  if (dryRun) return t("report.dryRun");
+  return ok ? t("report.ok") : t("report.failed");
 }
 
 function printReport(report) {
   const s = report.summary;
-  const prefix = s.mode === "dry-run" ? "[dry-run] " : "";
+  const prefix = s.mode === "dry-run" ? `${t("report.dryRun")} ` : "";
 
   // Validation
   if (report.validation) {
-    console.log(`${prefix}Validation:     ${mark(report.validation.ok, report.validation.dryRun)}`);
+    console.log(`${prefix}${t("report.validation")}  ${mark(report.validation.ok, report.validation.dryRun)}`);
   }
 
   // Plugin
   if (report.pluginInstall) {
     const method = report.pluginInstall.command?.includes("-l") ? "symlink" : "copy";
-    console.log(`${prefix}Plugin install:  ${mark(report.pluginInstall.ok, report.pluginInstall.dryRun)} (${method})`);
+    console.log(`${prefix}${t("report.pluginInstall")} ${mark(report.pluginInstall.ok, report.pluginInstall.dryRun)} (${method})`);
   }
   if (report.pluginEnable) {
-    console.log(`${prefix}Plugin enable:   ${mark(report.pluginEnable.ok, report.pluginEnable.dryRun)}`);
+    console.log(`${prefix}${t("report.pluginEnable")} ${mark(report.pluginEnable.ok, report.pluginEnable.dryRun)}`);
   }
 
   // Skills
   if (s.skippedSkills > 0) {
-    console.log(`${prefix}Skills:          skipped (${s.skippedSkills})`);
+    console.log(`${prefix}${t("report.skills")}  ${t("report.skillsSkipped", { count: s.skippedSkills })}`);
   } else if (report.skills.length > 0) {
-    console.log(`${prefix}Skills:          ${s.successfulSkills}/${s.requestedSkills} installed`);
+    console.log(`${prefix}${t("report.skills")}  ${t("report.skillsInstalled", { success: s.successfulSkills, total: s.requestedSkills })}`);
     if (s.failedSkills > 0) {
       const failed = report.skills.filter((r) => !r.ok);
       for (const f of failed) {
         const reason = f.missing
-          ? `command not found: ${f.missing}`
-          : f.stderr?.trim() || `exit code ${f.status}`;
-        console.log(`  FAILED: ${f.skill} — ${reason}`);
+          ? t("report.commandNotFound", { command: f.missing })
+          : f.stderr?.trim() || t("report.exitCode", { code: f.status });
+        console.log(`  ${t("report.skillFailed", { skill: f.skill, reason })}`);
       }
     }
   }
@@ -150,9 +151,9 @@ function printReport(report) {
   // Summary
   console.log();
   if (s.failed) {
-    console.log(`${prefix}Result: FAILED`);
+    console.log(`${prefix}${t("report.result")} ${t("report.failed")}`);
   } else {
-    console.log(`${prefix}Result: OK`);
+    console.log(`${prefix}${t("report.result")} ${t("report.ok")}`);
   }
 }
 

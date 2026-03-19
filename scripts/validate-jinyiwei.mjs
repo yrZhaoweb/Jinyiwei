@@ -6,6 +6,7 @@ import { validatePlugin } from "../lib/validators/plugin.mjs";
 import { validateGovernanceSkill, validateChatCharter, validateWatchCharter, validateInternalCharters } from "../lib/validators/charters.mjs";
 import { validateRules } from "../lib/validators/rules.mjs";
 import { validateTemplates } from "../lib/validators/templates.mjs";
+import { validateVersion } from "../lib/validators/version.mjs";
 
 // --- Step 1: required files ---
 const filesResult = validateFiles();
@@ -18,6 +19,7 @@ if (!filesResult.ok) {
 const validators = [
   validateSkills,
   validatePlugin,
+  validateVersion,
   validateGovernanceSkill,
   validateChatCharter,
   validateWatchCharter,
