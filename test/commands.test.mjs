@@ -35,7 +35,7 @@ describe("syncCommand", () => {
 });
 
 describe("statusCommand", () => {
-  it("always returns OK even if validation passes", () => {
+  it("returns OK when validation passes", () => {
     const code = statusCommand([]);
     assert.strictEqual(code, ExitCode.OK);
   });

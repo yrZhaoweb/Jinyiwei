@@ -82,8 +82,13 @@ function parseArgs(argv) {
     }
     if (arg === "--workspace") {
       const value = argv[index + 1];
-      if (!value) {
-        throw new Error("Missing value for --workspace");
+      if (!value || value.startsWith("--")) {
+        const error = { ok: false, error: "Missing or empty value for --workspace" };
+        if (argv.includes("--json")) {
+          console.log(JSON.stringify(error, null, 2));
+          process.exit(1);
+        }
+        throw new Error(error.error);
       }
       options.workspace = path.resolve(value);
       index += 1;

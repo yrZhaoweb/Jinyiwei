@@ -90,6 +90,14 @@ describe("CLI smoke tests", () => {
     assert.ok(r.code !== 0);
   });
 
+  it("install --json without workspace exits non-zero and returns structured JSON", () => {
+    const r = cli(["install", "--json"]);
+    assert.ok(r.code !== 0);
+    const parsed = JSON.parse(r.stdout);
+    assert.strictEqual(parsed.ok, false);
+    assert.strictEqual(typeof parsed.error, "string");
+  });
+
   it("install --dry-run with fake workspace exits non-zero", () => {
     const r = cli(["install", "/tmp/nonexistent-workspace-path", "--dry-run"]);
     assert.ok(r.code !== 0);

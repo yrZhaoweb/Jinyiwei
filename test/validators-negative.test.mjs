@@ -7,7 +7,7 @@ import { validateSkills } from "../lib/validators/skills.mjs";
 import { validateVersion } from "../lib/validators/version.mjs";
 
 describe("validator negative tests", () => {
-  describe("validatePlugin — detects tampered defaults", () => {
+  describe("validatePlugin — detects structural and constraint violations", () => {
     /** @type {string} */
     let original;
     const pluginPath = resolve("openclaw.plugin.json");
@@ -20,22 +20,56 @@ describe("validator negative tests", () => {
       fs.writeFileSync(pluginPath, original, "utf8");
     });
 
-    it("rejects when bossTitle default is changed", () => {
+    it("accepts when bossTitle default is changed to a valid string", () => {
       const plugin = JSON.parse(original);
       plugin.configSchema.properties.bossTitle.default = "Leader";
+      fs.writeFileSync(pluginPath, JSON.stringify(plugin, null, 2) + "\n", "utf8");
+      const result = validatePlugin();
+      assert.strictEqual(result.ok, true);
+    });
+
+    it("accepts when approvalMode default is changed to another valid mode", () => {
+      const plugin = JSON.parse(original);
+      plugin.configSchema.properties.approvalMode.default = "strict";
+      fs.writeFileSync(pluginPath, JSON.stringify(plugin, null, 2) + "\n", "utf8");
+      const result = validatePlugin();
+      assert.strictEqual(result.ok, true);
+    });
+
+    it("rejects when approvalMode default is an invalid mode", () => {
+      const plugin = JSON.parse(original);
+      plugin.configSchema.properties.approvalMode.default = "permissive";
+      fs.writeFileSync(pluginPath, JSON.stringify(plugin, null, 2) + "\n", "utf8");
+      const result = validatePlugin();
+      assert.strictEqual(result.ok, false);
+      assert.ok(result.errors.some((e) => e.includes("approvalMode")));
+    });
+
+    it("rejects when a required property is missing", () => {
+      const plugin = JSON.parse(original);
+      delete plugin.configSchema.properties.bossTitle;
       fs.writeFileSync(pluginPath, JSON.stringify(plugin, null, 2) + "\n", "utf8");
       const result = validatePlugin();
       assert.strictEqual(result.ok, false);
       assert.ok(result.errors.some((e) => e.includes("bossTitle")));
     });
 
-    it("rejects when approvalMode default is changed", () => {
+    it("rejects when bossTitle default is empty string", () => {
       const plugin = JSON.parse(original);
-      plugin.configSchema.properties.approvalMode.default = "strict";
+      plugin.configSchema.properties.bossTitle.default = "";
       fs.writeFileSync(pluginPath, JSON.stringify(plugin, null, 2) + "\n", "utf8");
       const result = validatePlugin();
       assert.strictEqual(result.ok, false);
-      assert.ok(result.errors.some((e) => e.includes("approvalMode")));
+      assert.ok(result.errors.some((e) => e.includes("bossTitle")));
+    });
+
+    it("rejects when externalIngressAgents default contains invalid agent", () => {
+      const plugin = JSON.parse(original);
+      plugin.configSchema.properties.externalIngressAgents.default = ["ChatAgent", "RogueAgent"];
+      fs.writeFileSync(pluginPath, JSON.stringify(plugin, null, 2) + "\n", "utf8");
+      const result = validatePlugin();
+      assert.strictEqual(result.ok, false);
+      assert.ok(result.errors.some((e) => e.includes("externalIngressAgents")));
     });
   });
 
