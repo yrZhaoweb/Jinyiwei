@@ -40,6 +40,7 @@ Then load these rules:
 - `{baseDir}/../../rules/approval-matrix.md`
 - `{baseDir}/../../rules/channel-access.md`
 - `{baseDir}/../../rules/md-control.md`
+- `{baseDir}/../../rules/response-contract.md`
 - `{baseDir}/../../rules/dispatch.md`
 - `{baseDir}/../../rules/audit.md`
 - `{baseDir}/../../rules/rejection.md`
@@ -51,9 +52,11 @@ Then load these rules:
 2. `ChatAgent` structures the request
 3. `ChatAgent` emits a dispatch packet using the standard template
 4. `WatchAgent` classifies the action using the action catalog and approves or blocks it with the hybrid approval matrix
-5. Internal agents execute only after approval
-6. Results return through `ChatAgent`
-7. Boss receives progress and exceptions only from `ChatAgent` or `WatchAgent`
+5. `WatchAgent` emits a decision using the standard approval template
+6. Internal agents execute only after approval
+7. Internal agents return results using their assigned response templates
+8. Results return through `ChatAgent`
+9. Boss receives progress and exceptions only from `ChatAgent` or `WatchAgent`
 
 ## Default Internal Team
 

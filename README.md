@@ -18,6 +18,8 @@ Its job is to configure OpenClaw with a strict hierarchy:
 - `agents/*/AGENT.md`: per-agent charter files
 - `rules/*.md`: global enforcement rules
 - `templates/dispatch-packet.md`: standard ChatAgent dispatch packet
+- `templates/approval-decision.md`: standard WatchAgent approval output
+- `templates/responses/*.md`: standard internal-agent response templates
 - `skills_list.md`: source list of bundled skills
 - `manifests/preinstalled-skills.json`: generated install manifest
 - `scripts/install.sh`: install Jinyiwei into OpenClaw
@@ -70,6 +72,8 @@ node ./scripts/validate-jinyiwei.mjs
 - approval policy is `hybrid`: channel and permission violations are hard-blocked, ordinary work is risk-graded
 - `WatchAgent` uses an action catalog to classify concrete actions before approval
 - `ChatAgent` must dispatch work with the standard dispatch packet template
+- `WatchAgent` must respond with the standard approval decision template
+- every internal agent must return work with its own response template
 - every action must be justified by markdown control files
 - installing Jinyiwei also installs the skills listed in `skills_list.md`
 
@@ -85,4 +89,5 @@ The root file `skills_list.md` is parsed into `manifests/preinstalled-skills.jso
 - `skills_list.md` matches `manifests/preinstalled-skills.json`
 - plugin defaults still enforce `Boss`, `锦衣卫`, `approvalMode=hybrid`, and external channel lockdown
 - action catalog and dispatch packet template remain present and referenced by rules
+- approval and internal response templates remain present and referenced by rules
 - agent charters still respect external-only and internal-only boundaries

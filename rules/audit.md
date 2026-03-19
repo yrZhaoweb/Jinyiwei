@@ -6,6 +6,7 @@ Every action must have:
 - requested action
 - action type
 - packet id
+- decision id
 - risk level
 - rationale
 - supervising decision

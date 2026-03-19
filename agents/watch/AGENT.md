@@ -24,6 +24,19 @@
 - Medium risk: approve with explicit record and rationale
 - High risk: block and escalate to Boss unless a governance rule explicitly allows it
 
+## Decision Output Requirement
+
+Every WatchAgent decision must use `templates/approval-decision.md` and include:
+
+- `decision_id`
+- `packet_id`
+- `action_type`
+- `risk_level`
+- `decision`
+- `reason`
+- `required_follow_up`
+- `reported_to_boss`
+
 ## Allowed Channels
 
 - Feishu
