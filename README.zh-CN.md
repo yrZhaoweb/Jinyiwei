@@ -23,24 +23,39 @@
 
 ```mermaid
 graph TB
-    Boss[Boss] <-->|请求/响应| ChatAgent
-    Boss <-->|告警/阻止| WatchAgent
+    subgraph 上层["👤 上层：Boss"]
+        B[Boss]
+    end
 
-    ChatAgent -->|分发| AgentGroup1
-    ChatAgent -->|分发| AgentGroup2
-    ChatAgent -->|分发| AgentGroupN
+    subgraph 中层["🚪 中层：ChatAgent + WatchAgent"]
+        CA[ChatAgent]
+        WA[WatchAgent]
+    end
 
-    AgentGroup1 -.->|动作| WatchAgent
-    AgentGroup2 -.->|动作| WatchAgent
-    AgentGroupN -.->|动作| WatchAgent
+    subgraph 下层["⚙️ 下层：Agent Groups"]
+        AG1[Agent Group 1]
+        AG2[Agent Group 2]
+        AGn[... 更多 Group]
+    end
 
-    WatchAgent -->|批准/拒绝| AgentGroup1
-    WatchAgent -->|批准/拒绝| AgentGroup2
-    WatchAgent -->|批准/拒绝| AgentGroupN
+    B <-->|请求/响应| CA
+    B <-->|告警/阻止| WA
 
-    AgentGroup1 -->|结果| ChatAgent
-    AgentGroup2 -->|结果| ChatAgent
-    AgentGroupN -->|结果| ChatAgent
+    CA -->|分发| AG1
+    CA -->|分发| AG2
+    CA -->|分发| AGn
+
+    AG1 -.->|动作| WA
+    AG2 -.->|动作| WA
+    AGn -.->|动作| WA
+
+    WA -->|批准/拒绝| AG1
+    WA -->|批准/拒绝| AG2
+    WA -->|批准/拒绝| AGn
+
+    AG1 -->|结果| CA
+    AG2 -->|结果| CA
+    AGn -->|结果| CA
 ```
 
 ### 工作流程
