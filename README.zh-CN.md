@@ -22,82 +22,81 @@
 ## 架构
 
 ```mermaid
-graph TB
-    subgraph UserLayer["👤 用户层"]
-        Boss["Boss（用户）"]
+flowchart TB
+    subgraph Boss["👤 Boss（用户）"]
+        B["用户（飞书/Telegram）"]
     end
 
-    subgraph GatewayLayer["🚪 网关层"]
-        ChatAgent["ChatAgent<br/><small>任务拆解与分发</small>"]
-        WatchAgent["WatchAgent（锦衣卫）<br/><small>监督与风险控制</small>"]
+    subgraph Gateway["🚪 网关层"]
+        direction TB
+        CA["ChatAgent<br/>任务拆解"]
+        WA["WatchAgent（锦衣卫）<br/>监督与风险控制"]
     end
 
-    subgraph WorkGroups["⚙️ 工作组"]
-        subgraph WG1["工作组：开发"]
-            CodeAgent["CodeAgent"]
-            UIAgent["UIAgent"]
+    subgraph Workers["⚙️ 工作组"]
+        subgraph WG1["开发组"]
+            C1["CodeAgent"]
+            U1["UIAgent"]
         end
-        subgraph WG2["工作组：质量"]
-            ReviewAgent["ReviewAgent"]
-            TestAgent["TestAgent"]
+        subgraph WG2["质量组"]
+            R1["ReviewAgent"]
+            T1["TestAgent"]
         end
-        subgraph WG3["工作组：..."]
-            AgentN["Agent N"]
-            AgentM["Agent M"]
+        subgraph WG3["..."]
+            N1["Agent N"]
         end
     end
 
-    Boss <-->|"飞书 / Telegram"| ChatAgent
-    Boss <-->|"告警与上报"| WatchAgent
+    B -->|请求| CA
+    B <--|响应| CA
 
-    ChatAgent -->|"① 拆解并分发任务"| WG1
-    ChatAgent -->|"① 拆解并分发任务"| WG2
-    ChatAgent -->|"① 拆解并分发任务"| WG3
+    CA -->|分发| C1
+    CA -->|分发| U1
+    CA -->|分发| R1
+    CA -->|分发| T1
+    CA -->|分发| N1
 
-    CodeAgent -.->|"② 动作请求"| WatchAgent
-    UIAgent -.->|"② 动作请求"| WatchAgent
-    ReviewAgent -.->|"② 动作请求"| WatchAgent
-    TestAgent -.->|"② 动作请求"| WatchAgent
-    AgentN -.->|"② 动作请求"| WatchAgent
-    AgentM -.->|"② 动作请求"| WatchAgent
+    C1 -.->|动作| WA
+    U1 -.->|动作| WA
+    R1 -.->|动作| WA
+    T1 -.->|动作| WA
+    N1 -.->|动作| WA
 
-    WatchAgent -->|"③ 批准 / 拒绝"| CodeAgent
-    WatchAgent -->|"③ 批准 / 拒绝"| UIAgent
-    WatchAgent -->|"③ 批准 / 拒绝"| ReviewAgent
-    WatchAgent -->|"③ 批准 / 拒绝"| TestAgent
-    WatchAgent -->|"③ 批准 / 拒绝"| AgentN
-    WatchAgent -->|"③ 批准 / 拒绝"| AgentM
+    WA -->|批准/拒绝| C1
+    WA -->|批准/拒绝| U1
+    WA -->|批准/拒绝| R1
+    WA -->|批准/拒绝| T1
+    WA -->|批准/拒绝| N1
 
-    WatchAgent -->|"🚨 风险上报"| Boss
-    WatchAgent -->|"🛑 阻止危险动作"| WorkGroups
+    WA -.->|风险告警| B
+    WA -.->|阻止| C1
+    WA -.->|阻止| U1
 
-    CodeAgent -->|"④ 结果"| ChatAgent
-    UIAgent -->|"④ 结果"| ChatAgent
-    ReviewAgent -->|"④ 结果"| ChatAgent
-    TestAgent -->|"④ 结果"| ChatAgent
-    AgentN -->|"④ 结果"| ChatAgent
-    AgentM -->|"④ 结果"| ChatAgent
+    C1 -->|结果| CA
+    U1 -->|结果| CA
+    R1 -->|结果| CA
+    T1 -->|结果| CA
+    N1 -->|结果| CA
 
     style Boss fill:#f9d71c,stroke:#333,color:#000
-    style ChatAgent fill:#4a9eff,stroke:#333,color:#fff
-    style WatchAgent fill:#ff4a4a,stroke:#333,color:#fff
-    style CodeAgent fill:#e8f4e8,stroke:#4a9
-    style UIAgent fill:#e8f4e8,stroke:#4a9
-    style ReviewAgent fill:#fff4e8,stroke:#c90
-    style TestAgent fill:#fff4e8,stroke:#c90
-    style AgentN fill:#f0f0f0,stroke:#999
-    style AgentM fill:#f0f0f0,stroke:#999
+    style CA fill:#4a9eff,stroke:#333,color:#fff
+    style WA fill:#ff4a4a,stroke:#333,color:#fff
+    style C1 fill:#e8f4e8,stroke:#4a9
+    style U1 fill:#e8f4e8,stroke:#4a9
+    style R1 fill:#fff4e8,stroke:#c90
+    style T1 fill:#fff4e8,stroke:#c90
+    style N1 fill:#f0f0f0,stroke:#999
 ```
 
 ### 工作流程
 
-1. **任务分发** — Boss 向 `ChatAgent` 发送请求，ChatAgent 将复杂任务拆解并分发到对应的工作组
-2. **动作监督** — 每个 Agent 的动作在执行前都会发送给 `WatchAgent` 审批
-3. **风险控制** — `WatchAgent` 评估每个动作：
-   - ✅ **低风险** → 自动批准
-   - ⚠️ **中风险** → 上报 Boss，等待确认
-   - 🛑 **高风险** → 立即阻止，报告 Boss
-4. **结果汇总** — 工作结果通过 `ChatAgent` 汇总返回给 Boss
+1. **任务分发** — Boss → ChatAgent 拆解任务 → 分发到工作组
+2. **动作监督** — 每个 Agent 的动作 → WatchAgent 审批
+3. **风险控制** — WatchAgent 评估：
+   - ✅ 低风险 → 自动批准
+   - ⚠️ 中风险 → 告警 Boss
+   - 🛑 高风险 → 立即阻止
+4. **结果汇总** — 结果通过 ChatAgent → Boss
 
 ## 快速开始
 
