@@ -23,8 +23,8 @@ Multi-agent systems without governance quickly become chaotic — agents talk to
 
 ```
 ┌──────────────────────────────────────────────────────────────────────────────┐
-│                                   👤 Boss                                    │
-│                          (User / Feishu / Telegram)                          │
+│                                   👤 Boss                                     │
+│                          (User / Feishu / Telegram)                            │
 └──────────────────────────────────────────────────────────────────────────────┘
                     │ Request/Response                     ▲ Alert/Block
                     ▼                                      │
