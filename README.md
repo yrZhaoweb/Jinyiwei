@@ -26,19 +26,21 @@ Multi-agent systems without governance quickly become chaotic — agents talk to
 │                        👤 Boss                              │
 │                   (User / Feishu / Telegram)                │
 └─────────────────────────────────────────────────────────────┘
-                    │ Request/Response   │ Alert/Block
-                    ▼                    ▼
+              │ Request/Response              │ Alert/Block
+              ▼                                ▼
 ┌─────────────────────────────────────────────────────────────┐
 │              ChatAgent          WatchAgent                  │
 │           (Task Decomposition)  (Supervision)               │
 └─────────────────────────────────────────────────────────────┘
-          │ Dispatch                     ▲ Action Approval
-          ▼                              │
+              │ Dispatch                     ▲ Action Approval
+              ▼                              │
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│ [AgentGroup1] [AgentGroup2] [AgentGroup3] [AgentGroup4] [AgentGroup5] ...  │
+│ [AgentGroup1] [AgentGroup2] [AgentGroup3] [AgentGroup4] [AgentGroup5]      │
 │   R&D/Dev    Content Creation  Data Analysis   Marketing    Finance        │
 │ [AgentGroup6] [AgentGroup7] [AgentGroup8] [AgentGroup9] [AgentGroup10]     │
 │   HR/Legal   Compliance      Customer Service Supply Chain  Strategy       │
+│ [AgentGroupN]                                                                         │
+│   Other Functions                                                               │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
 
