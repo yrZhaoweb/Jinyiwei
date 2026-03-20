@@ -23,40 +23,12 @@ Multi-agent systems without governance quickly become chaotic — agents talk to
 
 ```mermaid
 graph TB
-    subgraph Boss["👤 Boss (User)"]
-    end
-
-    subgraph Gateway["🚪 Gateway Layer"]
-        CA[ChatAgent]
-        WA[WatchAgent]
-    end
-
-    subgraph Workers["⚙️ Work Groups"]
-        WG1[Development: CodeAgent, UIAgent]
-        WG2[Quality: ReviewAgent, TestAgent]
-        WGn[... More Groups]
-    end
-
-    Boss <-->CA
-    Boss <-->WA
-
-    CA -->WG1
-    CA -->WG2
-    CA -->WGn
-
-    WG1 -.->WA
-    WG2 -.->WA
-    WGn -.->WA
-
-    WA -->WG1
-    WA -->WG2
-    WA -->WGn
-
-    WA -.->|Alert/Block| Boss
-
-    WG1 -->CA
-    WG2 -->CA
-    WGn -->CA
+    Boss[Boss] <-->|Request/Response| Gateway
+    Gateway -->|Dispatch| Workers
+    Workers -.->|Action| Gateway
+    Gateway -->|Approve/Reject| Workers
+    Gateway -.->|Alert/Block| Boss
+    Workers -->|Result| Gateway
 ```
 
 ### Workflow

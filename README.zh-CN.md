@@ -23,40 +23,12 @@
 
 ```mermaid
 graph TB
-    subgraph Boss["👤 Boss（用户）"]
-    end
-
-    subgraph Gateway["🚪 网关层"]
-        CA[ChatAgent]
-        WA[WatchAgent]
-    end
-
-    subgraph Workers["⚙️ 工作组"]
-        WG1[开发组: CodeAgent, UIAgent]
-        WG2[质量组: ReviewAgent, TestAgent]
-        WGn[... 更多工作组]
-    end
-
-    Boss <-->CA
-    Boss <-->WA
-
-    CA -->WG1
-    CA -->WG2
-    CA -->WGn
-
-    WG1 -.->WA
-    WG2 -.->WA
-    WGn -.->WA
-
-    WA -->WG1
-    WA -->WG2
-    WA -->WGn
-
-    WA -.->|告警/阻止| Boss
-
-    WG1 -->CA
-    WG2 -->CA
-    WGn -->CA
+    Boss[Boss] <-->|请求/响应| Gateway
+    Gateway -->|分发| Workers
+    Workers -.->|动作| Gateway
+    Gateway -->|批准/拒绝| Workers
+    Gateway -.->|告警/阻止| Boss
+    Workers -->|结果| Gateway
 ```
 
 ### 工作流程
