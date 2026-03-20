@@ -22,70 +22,41 @@
 ## 架构
 
 ```mermaid
-flowchart TB
+graph TB
     subgraph Boss["👤 Boss（用户）"]
-        B["用户（飞书/Telegram）"]
     end
 
     subgraph Gateway["🚪 网关层"]
-        direction TB
-        CA["ChatAgent<br/>任务拆解"]
-        WA["WatchAgent（锦衣卫）<br/>监督与风险控制"]
+        CA[ChatAgent]
+        WA[WatchAgent]
     end
 
     subgraph Workers["⚙️ 工作组"]
-        subgraph WG1["开发组"]
-            C1["CodeAgent"]
-            U1["UIAgent"]
-        end
-        subgraph WG2["质量组"]
-            R1["ReviewAgent"]
-            T1["TestAgent"]
-        end
-        subgraph WG3["..."]
-            N1["Agent N"]
-        end
+        WG1[开发组: CodeAgent, UIAgent]
+        WG2[质量组: ReviewAgent, TestAgent]
+        WGn[... 更多工作组]
     end
 
-    B -->|请求| CA
-    B <--|响应| CA
+    Boss <-->CA
+    Boss <-->WA
 
-    CA -->|分发| C1
-    CA -->|分发| U1
-    CA -->|分发| R1
-    CA -->|分发| T1
-    CA -->|分发| N1
+    CA -->WG1
+    CA -->WG2
+    CA -->WGn
 
-    C1 -.->|动作| WA
-    U1 -.->|动作| WA
-    R1 -.->|动作| WA
-    T1 -.->|动作| WA
-    N1 -.->|动作| WA
+    WG1 -.->WA
+    WG2 -.->WA
+    WGn -.->WA
 
-    WA -->|批准/拒绝| C1
-    WA -->|批准/拒绝| U1
-    WA -->|批准/拒绝| R1
-    WA -->|批准/拒绝| T1
-    WA -->|批准/拒绝| N1
+    WA -->WG1
+    WA -->WG2
+    WA -->WGn
 
-    WA -.->|风险告警| B
-    WA -.->|阻止| C1
-    WA -.->|阻止| U1
+    WA -.->|告警/阻止| Boss
 
-    C1 -->|结果| CA
-    U1 -->|结果| CA
-    R1 -->|结果| CA
-    T1 -->|结果| CA
-    N1 -->|结果| CA
-
-    style Boss fill:#f9d71c,stroke:#333,color:#000
-    style CA fill:#4a9eff,stroke:#333,color:#fff
-    style WA fill:#ff4a4a,stroke:#333,color:#fff
-    style C1 fill:#e8f4e8,stroke:#4a9
-    style U1 fill:#e8f4e8,stroke:#4a9
-    style R1 fill:#fff4e8,stroke:#c90
-    style T1 fill:#fff4e8,stroke:#c90
-    style N1 fill:#f0f0f0,stroke:#999
+    WG1 -->CA
+    WG2 -->CA
+    WGn -->CA
 ```
 
 ### 工作流程
