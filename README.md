@@ -23,39 +23,27 @@ Multi-agent systems without governance quickly become chaotic — agents talk to
 
 ```mermaid
 graph TB
-    subgraph Top["👤 Top: Boss"]
-        B[Boss]
+    subgraph L1["👤 Boss"]
+        B[User]
     end
 
-    subgraph Middle["🚪 Middle: ChatAgent + WatchAgent"]
+    subgraph L2["🚪 Gateway"]
         CA[ChatAgent]
         WA[WatchAgent]
     end
 
-    subgraph Bottom["⚙️ Bottom: Agent Groups"]
-        AG1[Agent Group 1]
-        AG2[Agent Group 2]
-        AGn[... More Groups]
+    subgraph L3["⚙️ Agent Groups"]
+        AG1[Group 1]
+        AG2[Group 2]
+        AG3[Group N]
     end
 
     B <-->|Request/Response| CA
     B <-->|Alert/Block| WA
-
-    CA -->|Dispatch| AG1
-    CA -->|Dispatch| AG2
-    CA -->|Dispatch| AGn
-
-    AG1 -.->|Action| WA
-    AG2 -.->|Action| WA
-    AGn -.->|Action| WA
-
-    WA -->|Approve/Reject| AG1
-    WA -->|Approve/Reject| AG2
-    WA -->|Approve/Reject| AGn
-
-    AG1 -->|Result| CA
-    AG2 -->|Result| CA
-    AGn -->|Result| CA
+    CA -->|Dispatch| L3
+    L3 -.->|Action| WA
+    WA -->|Approve/Reject| L3
+    L3 -->|Result| CA
 ```
 
 ### Workflow
