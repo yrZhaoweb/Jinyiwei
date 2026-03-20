@@ -22,33 +22,82 @@
 ## 架构
 
 ```mermaid
-graph TD
-    Boss["Boss（用户）"]
+graph TB
+    subgraph UserLayer["👤 用户层"]
+        Boss["Boss（用户）"]
+    end
 
-    Boss <-->|飞书 / Telegram| ChatAgent
-    Boss <-->|飞书 / Telegram| WatchAgent
+    subgraph GatewayLayer["🚪 网关层"]
+        ChatAgent["ChatAgent<br/><small>任务拆解与分发</small>"]
+        WatchAgent["WatchAgent（锦衣卫）<br/><small>监督与风险控制</small>"]
+    end
 
-    ChatAgent -->|分发包| WatchAgent
-    WatchAgent -->|批准 / 拒绝| ChatAgent
+    subgraph WorkGroups["⚙️ 工作组"]
+        subgraph WG1["工作组：开发"]
+            CodeAgent["CodeAgent"]
+            UIAgent["UIAgent"]
+        end
+        subgraph WG2["工作组：质量"]
+            ReviewAgent["ReviewAgent"]
+            TestAgent["TestAgent"]
+        end
+        subgraph WG3["工作组：..."]
+            AgentN["Agent N"]
+            AgentM["Agent M"]
+        end
+    end
 
-    WatchAgent -.->|批准| CodeAgent
-    WatchAgent -.->|批准| UIAgent
-    WatchAgent -.->|批准| ReviewAgent
-    WatchAgent -.->|批准| TestAgent
+    Boss <-->|"飞书 / Telegram"| ChatAgent
+    Boss <-->|"告警与上报"| WatchAgent
 
-    CodeAgent -->|响应| ChatAgent
-    UIAgent -->|响应| ChatAgent
-    ReviewAgent -->|响应| ChatAgent
-    TestAgent -->|响应| ChatAgent
+    ChatAgent -->|"① 拆解并分发任务"| WG1
+    ChatAgent -->|"① 拆解并分发任务"| WG2
+    ChatAgent -->|"① 拆解并分发任务"| WG3
 
-    style Boss fill:#f9d71c,stroke:#333
+    CodeAgent -.->|"② 动作请求"| WatchAgent
+    UIAgent -.->|"② 动作请求"| WatchAgent
+    ReviewAgent -.->|"② 动作请求"| WatchAgent
+    TestAgent -.->|"② 动作请求"| WatchAgent
+    AgentN -.->|"② 动作请求"| WatchAgent
+    AgentM -.->|"② 动作请求"| WatchAgent
+
+    WatchAgent -->|"③ 批准 / 拒绝"| CodeAgent
+    WatchAgent -->|"③ 批准 / 拒绝"| UIAgent
+    WatchAgent -->|"③ 批准 / 拒绝"| ReviewAgent
+    WatchAgent -->|"③ 批准 / 拒绝"| TestAgent
+    WatchAgent -->|"③ 批准 / 拒绝"| AgentN
+    WatchAgent -->|"③ 批准 / 拒绝"| AgentM
+
+    WatchAgent -->|"🚨 风险上报"| Boss
+    WatchAgent -->|"🛑 阻止危险动作"| WorkGroups
+
+    CodeAgent -->|"④ 结果"| ChatAgent
+    UIAgent -->|"④ 结果"| ChatAgent
+    ReviewAgent -->|"④ 结果"| ChatAgent
+    TestAgent -->|"④ 结果"| ChatAgent
+    AgentN -->|"④ 结果"| ChatAgent
+    AgentM -->|"④ 结果"| ChatAgent
+
+    style Boss fill:#f9d71c,stroke:#333,color:#000
     style ChatAgent fill:#4a9eff,stroke:#333,color:#fff
     style WatchAgent fill:#ff4a4a,stroke:#333,color:#fff
-    style CodeAgent fill:#eee,stroke:#999
-    style UIAgent fill:#eee,stroke:#999
-    style ReviewAgent fill:#eee,stroke:#999
-    style TestAgent fill:#eee,stroke:#999
+    style CodeAgent fill:#e8f4e8,stroke:#4a9
+    style UIAgent fill:#e8f4e8,stroke:#4a9
+    style ReviewAgent fill:#fff4e8,stroke:#c90
+    style TestAgent fill:#fff4e8,stroke:#c90
+    style AgentN fill:#f0f0f0,stroke:#999
+    style AgentM fill:#f0f0f0,stroke:#999
 ```
+
+### 工作流程
+
+1. **任务分发** — Boss 向 `ChatAgent` 发送请求，ChatAgent 将复杂任务拆解并分发到对应的工作组
+2. **动作监督** — 每个 Agent 的动作在执行前都会发送给 `WatchAgent` 审批
+3. **风险控制** — `WatchAgent` 评估每个动作：
+   - ✅ **低风险** → 自动批准
+   - ⚠️ **中风险** → 上报 Boss，等待确认
+   - 🛑 **高风险** → 立即阻止，报告 Boss
+4. **结果汇总** — 工作结果通过 `ChatAgent` 汇总返回给 Boss
 
 ## 快速开始
 

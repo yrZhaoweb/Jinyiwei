@@ -22,33 +22,82 @@ Multi-agent systems without governance quickly become chaotic — agents talk to
 ## Architecture
 
 ```mermaid
-graph TD
-    Boss["Boss (User)"]
+graph TB
+    subgraph UserLayer["👤 User Layer"]
+        Boss["Boss (User)"]
+    end
 
-    Boss <-->|Feishu / Telegram| ChatAgent
-    Boss <-->|Feishu / Telegram| WatchAgent
+    subgraph GatewayLayer["🚪 Gateway Layer"]
+        ChatAgent["ChatAgent<br/><small>Task Decomposition & Dispatch</small>"]
+        WatchAgent["WatchAgent (锦衣卫)<br/><small>Supervision & Risk Control</small>"]
+    end
 
-    ChatAgent -->|dispatch packet| WatchAgent
-    WatchAgent -->|approve / reject| ChatAgent
+    subgraph WorkGroups["⚙️ Work Groups"]
+        subgraph WG1["Work Group: Development"]
+            CodeAgent["CodeAgent"]
+            UIAgent["UIAgent"]
+        end
+        subgraph WG2["Work Group: Quality"]
+            ReviewAgent["ReviewAgent"]
+            TestAgent["TestAgent"]
+        end
+        subgraph WG3["Work Group: ..."]
+            AgentN["Agent N"]
+            AgentM["Agent M"]
+        end
+    end
 
-    WatchAgent -.->|approve| CodeAgent
-    WatchAgent -.->|approve| UIAgent
-    WatchAgent -.->|approve| ReviewAgent
-    WatchAgent -.->|approve| TestAgent
+    Boss <-->|"Feishu / Telegram"| ChatAgent
+    Boss <-->|"Alerts & Escalations"| WatchAgent
 
-    CodeAgent -->|response| ChatAgent
-    UIAgent -->|response| ChatAgent
-    ReviewAgent -->|response| ChatAgent
-    TestAgent -->|response| ChatAgent
+    ChatAgent -->|"① Decompose & Dispatch Tasks"| WG1
+    ChatAgent -->|"① Decompose & Dispatch Tasks"| WG2
+    ChatAgent -->|"① Decompose & Dispatch Tasks"| WG3
 
-    style Boss fill:#f9d71c,stroke:#333
+    CodeAgent -.->|"② Action Request"| WatchAgent
+    UIAgent -.->|"② Action Request"| WatchAgent
+    ReviewAgent -.->|"② Action Request"| WatchAgent
+    TestAgent -.->|"② Action Request"| WatchAgent
+    AgentN -.->|"② Action Request"| WatchAgent
+    AgentM -.->|"② Action Request"| WatchAgent
+
+    WatchAgent -->|"③ Approve / Reject"| CodeAgent
+    WatchAgent -->|"③ Approve / Reject"| UIAgent
+    WatchAgent -->|"③ Approve / Reject"| ReviewAgent
+    WatchAgent -->|"③ Approve / Reject"| TestAgent
+    WatchAgent -->|"③ Approve / Reject"| AgentN
+    WatchAgent -->|"③ Approve / Reject"| AgentM
+
+    WatchAgent -->|"🚨 Risk Alert"| Boss
+    WatchAgent -->|"🛑 Block Dangerous Action"| WorkGroups
+
+    CodeAgent -->|"④ Result"| ChatAgent
+    UIAgent -->|"④ Result"| ChatAgent
+    ReviewAgent -->|"④ Result"| ChatAgent
+    TestAgent -->|"④ Result"| ChatAgent
+    AgentN -->|"④ Result"| ChatAgent
+    AgentM -->|"④ Result"| ChatAgent
+
+    style Boss fill:#f9d71c,stroke:#333,color:#000
     style ChatAgent fill:#4a9eff,stroke:#333,color:#fff
     style WatchAgent fill:#ff4a4a,stroke:#333,color:#fff
-    style CodeAgent fill:#eee,stroke:#999
-    style UIAgent fill:#eee,stroke:#999
-    style ReviewAgent fill:#eee,stroke:#999
-    style TestAgent fill:#eee,stroke:#999
+    style CodeAgent fill:#e8f4e8,stroke:#4a9
+    style UIAgent fill:#e8f4e8,stroke:#4a9
+    style ReviewAgent fill:#fff4e8,stroke:#c90
+    style TestAgent fill:#fff4e8,stroke:#c90
+    style AgentN fill:#f0f0f0,stroke:#999
+    style AgentM fill:#f0f0f0,stroke:#999
 ```
+
+### Workflow
+
+1. **Task Dispatch** — Boss sends requests to `ChatAgent`, which decomposes complex tasks and dispatches sub-tasks to appropriate Work Groups
+2. **Action Supervision** — Every agent action is sent to `WatchAgent` for approval before execution
+3. **Risk Control** — `WatchAgent` evaluates each action:
+   - ✅ **Low risk** → Auto-approve
+   - ⚠️ **Medium risk** → Alert Boss, await confirmation
+   - 🛑 **High risk** → Block immediately, report to Boss
+4. **Result Aggregation** — Work results flow back through `ChatAgent` to Boss
 
 ## Quick Start
 
