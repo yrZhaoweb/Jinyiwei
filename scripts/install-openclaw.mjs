@@ -43,12 +43,40 @@ function run(command, args, options = {}) {
   };
 }
 
+/**
+ * Recursively copy a directory.
+ * @param {string} src
+ * @param {string} dst
+ */
+function copyDirRecursive(src, dst) {
+  fs.mkdirSync(dst, { recursive: true });
+  for (const entry of fs.readdirSync(src, { withFileTypes: true })) {
+    const srcPath = path.join(src, entry.name);
+    const dstPath = path.join(dst, entry.name);
+    if (entry.isDirectory()) {
+      copyDirRecursive(srcPath, dstPath);
+    } else {
+      fs.copyFileSync(srcPath, dstPath);
+    }
+  }
+}
+
+const AGENTS = [
+  { id: "chat",   name: "ChatAgent",   role: "external", dispatches: ["watch"] },
+  { id: "watch",  name: "WatchAgent",  role: "external", dispatches: ["code", "ui", "review", "test"] },
+  { id: "code",   name: "CodeAgent",   role: "internal", reportsTo: "chat" },
+  { id: "review", name: "ReviewAgent", role: "internal", reportsTo: "chat" },
+  { id: "test",   name: "TestAgent",   role: "internal", reportsTo: "chat" },
+  { id: "ui",     name: "UIAgent",     role: "internal", reportsTo: "chat" },
+];
+
 function parseArgs(argv) {
   const options = {
     dryRun: false,
     copyMode: false,
     skipPlugin: false,
     skipSkills: false,
+    skipAgents: false,
     failFast: false,
     json: false,
     workspace: null
@@ -70,6 +98,10 @@ function parseArgs(argv) {
     }
     if (arg === "--skip-skills") {
       options.skipSkills = true;
+      continue;
+    }
+    if (arg === "--skip-agents") {
+      options.skipAgents = true;
       continue;
     }
     if (arg === "--fail-fast") {
@@ -137,6 +169,14 @@ function printReport(report) {
     console.log(`${prefix}${t("report.pluginEnable")} ${mark(report.pluginEnable.ok, report.pluginEnable.dryRun)}`);
   }
 
+  // Agents
+  if (report.agentDeploy && report.agentDeploy.length > 0) {
+    const agentOk = report.agentDeploy.filter((a) => a.ok).length;
+    const agentTotal = report.agentDeploy.length;
+    const agentDry = report.agentDeploy[0]?.dryRun;
+    console.log(`${prefix}Agents:     ${mark(agentOk === agentTotal, agentDry)} (${agentOk}/${agentTotal})`);
+  }
+
   // Skills
   if (s.skippedSkills > 0) {
     console.log(`${prefix}${t("report.skills")}  ${t("report.skillsSkipped", { count: s.skippedSkills })}`);
@@ -199,43 +239,113 @@ if (!options.skipPlugin) {
   stopIfNeeded(report, report.pluginEnable, options.failFast, options.json);
 }
 
-if (!options.skipSkills) {
-  for (const skill of manifest.skills) {
-    if (!options.workspace) {
-      const result = {
-        ok: false,
-        skill,
-        missing: "workspace",
-        hint: "Pass --workspace /path/to/openclaw/workspace so clawhub installs into the right OpenClaw workspace."
-      };
-      report.skills.push(result);
-      report.summary.failedSkills += 1;
-      stopIfNeeded(report, result, options.failFast, options.json);
+// Agent workspace deployment
+report.agentDeploy = [];
+if (!options.skipAgents && options.workspace) {
+  for (const agent of AGENTS) {
+    const agentDir = path.join(options.workspace, "agents", agent.id);
+    if (options.dryRun) {
+      report.agentDeploy.push({ agent: agent.id, ok: true, dryRun: true, path: agentDir });
       continue;
     }
+    try {
+      fs.mkdirSync(agentDir, { recursive: true });
+      fs.copyFileSync(resolve(`agents/${agent.id}/AGENT.md`), path.join(agentDir, "AGENT.md"));
 
-    const result = run("clawhub", ["install", skill], {
-      cwd: options.workspace,
-      dryRun: options.dryRun
-    });
-    result.skill = skill;
-    report.skills.push(result);
-    if (result.ok) {
-      report.summary.successfulSkills += 1;
-    } else {
-      report.summary.failedSkills += 1;
-      stopIfNeeded(report, result, options.failFast, options.json);
+      const rulesDst = path.join(agentDir, "rules");
+      if (!fs.existsSync(rulesDst)) {
+        if (options.copyMode) {
+          copyDirRecursive(resolve("rules"), rulesDst);
+        } else {
+          fs.symlinkSync(resolve("rules"), rulesDst);
+        }
+      }
+
+      const templatesDst = path.join(agentDir, "templates");
+      if (!fs.existsSync(templatesDst)) {
+        if (options.copyMode) {
+          copyDirRecursive(resolve("templates"), templatesDst);
+        } else {
+          fs.symlinkSync(resolve("templates"), templatesDst);
+        }
+      }
+
+      report.agentDeploy.push({ agent: agent.id, ok: true, path: agentDir });
+    } catch (/** @type {any} */ err) {
+      report.agentDeploy.push({ agent: agent.id, ok: false, error: err.message });
+    }
+  }
+
+  // Write agent registry
+  if (!options.dryRun) {
+    try {
+      const registry = {
+        agents: AGENTS.map((a) => ({
+          id: a.id,
+          name: a.name,
+          role: a.role,
+          workspace: path.join(options.workspace, "agents", a.id),
+          ...(a.dispatches ? { dispatches: a.dispatches } : {}),
+          ...(a.reportsTo ? { reportsTo: a.reportsTo } : {}),
+        })),
+      };
+      fs.writeFileSync(
+        path.join(options.workspace, "openclaw-agents.json"),
+        JSON.stringify(registry, null, 2) + "\n",
+        "utf8"
+      );
+    } catch {
+      // non-fatal
+    }
+  }
+}
+
+// Skills installation
+if (!options.skipSkills) {
+  if (!hasCommand("clawhub")) {
+    report.summary.skippedSkills = manifest.skills.length;
+    report.clawhubMissing = true;
+  } else {
+    for (const skill of manifest.skills) {
+      if (!options.workspace) {
+        const result = {
+          ok: false,
+          skill,
+          missing: "workspace",
+          hint: "Pass --workspace /path/to/openclaw/workspace so clawhub installs into the right OpenClaw workspace."
+        };
+        report.skills.push(result);
+        report.summary.failedSkills += 1;
+        stopIfNeeded(report, result, options.failFast, options.json);
+        continue;
+      }
+
+      const result = run("clawhub", ["install", skill], {
+        cwd: options.workspace,
+        dryRun: options.dryRun
+      });
+      result.skill = skill;
+      report.skills.push(result);
+      if (result.ok) {
+        report.summary.successfulSkills += 1;
+      } else {
+        report.summary.failedSkills += 1;
+        stopIfNeeded(report, result, options.failFast, options.json);
+      }
     }
   }
 } else {
   report.summary.skippedSkills = manifest.skills.length;
 }
 
+const agentDeployFailed = report.agentDeploy?.some((a) => !a.ok) ?? false;
+
 if (
   !validation.ok ||
   (report.pluginInstall && !report.pluginInstall.ok) ||
   (report.pluginEnable && !report.pluginEnable.ok) ||
-  report.summary.failedSkills > 0
+  report.summary.failedSkills > 0 ||
+  agentDeployFailed
 ) {
   report.summary.failed = true;
 }
