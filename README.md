@@ -21,29 +21,24 @@ Multi-agent systems without governance quickly become chaotic — agents talk to
 
 ## Architecture
 
-```mermaid
-graph TB
-    subgraph L1["👤 Boss"]
-        B[User]
-    end
-
-    subgraph L2["🚪 Gateway"]
-        CA[ChatAgent]
-        WA[WatchAgent]
-    end
-
-    subgraph L3["⚙️ Agent Groups"]
-        AG1[Group 1]
-        AG2[Group 2]
-        AG3[Group N]
-    end
-
-    B <-->|Request/Response| CA
-    B <-->|Alert/Block| WA
-    CA -->|Dispatch| L3
-    L3 -.->|Action| WA
-    WA -->|Approve/Reject| L3
-    L3 -->|Result| CA
+```
+┌─────────────────────────────────────────────────────────────┐
+│                        👤 Boss                              │
+│                   (User / Feishu / Telegram)                │
+└─────────────────────────────────────────────────────────────┘
+                    │ Request/Response   │ Alert/Block
+                    ▼                    ▼
+┌─────────────────────────────────────────────────────────────┐
+│              ChatAgent          WatchAgent                  │
+│           (Task Decomposition)  (Supervision)               │
+└─────────────────────────────────────────────────────────────┘
+          │ Dispatch                     ▲ Action Approval
+          ▼                              │
+┌─────────────────────────────────────────────────────────────┐
+│   [Group 1]      [Group 2]      [Group 3]     [Group N]    │
+│   CodeAgent      UIAgent        ReviewAgent   TestAgent    │
+│   ...            ...            ...           ...          │
+└─────────────────────────────────────────────────────────────┘
 ```
 
 ### Workflow
