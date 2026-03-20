@@ -35,9 +35,8 @@ Multi-agent systems without governance quickly become chaotic — agents talk to
           │ Dispatch                     ▲ Action Approval
           ▼                              │
 ┌─────────────────────────────────────────────────────────────┐
-│   [Group 1]      [Group 2]      [Group 3]     [Group N]    │
-│   CodeAgent      UIAgent        ReviewAgent   TestAgent    │
-│   ...            ...            ...           ...          │
+│ [AgentGroup1]  [AgentGroup2]  [AgentGroup3]  [AgentGroupN]  │
+│   Coding       Writing      Data Analysis   Marketing       │
 └─────────────────────────────────────────────────────────────┘
 ```
 
