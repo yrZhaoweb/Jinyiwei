@@ -23,8 +23,8 @@ Multi-agent systems without governance quickly become chaotic — agents talk to
 
 ```
 ┌──────────────────────────────────────────────────────────────────────────────┐
-│                                   👤 Boss                                     │
-│                          (User / Feishu / Telegram)                            │
+│                                   👤 Boss                                    │
+│                          (User / Feishu / Telegram)                          │
 └──────────────────────────────────────────────────────────────────────────────┘
                     │ Request/Response                     ▲ Alert/Block
                     ▼                                      │
@@ -35,10 +35,10 @@ Multi-agent systems without governance quickly become chaotic — agents talk to
                     │ Dispatch                             ▲ Action Approval
                     ▼                                      │
 ┌──────────────────────────────────────────────────────────────────────────────┐
-│ [AgentGroup1] R&D / Dev        [AgentGroup2] Content        [AgentGroup3] Data  │
-│ [AgentGroup4] Marketing        [AgentGroup5] Finance        [AgentGroup6] HR    │
-│ [AgentGroup7] Legal            [AgentGroup8] Customer Svc   [AgentGroup9] Supply│
-│ [AgentGroup10] Strategy        [AgentGroupN] Other                              │
+│ [AgentGroup1] R&D / Dev       [AgentGroup2] Content       [AgentGroup3] Data │
+│ [AgentGroup4] Marketing       [AgentGroup5] Finance       [AgentGroup6] HR   │
+│ [AgentGroup7] Legal           [AgentGroup8] Customer Svc  [AgentGroup9] Supp │
+│ [AgentGroup10] Strategy       [AgentGroupN] Other                            │
 └──────────────────────────────────────────────────────────────────────────────┘
 ```
 
