@@ -35,10 +35,10 @@
                     │ 分发任务                              ▲ 动作审批
                     ▼                                       │
 ┌──────────────────────────────────────────────────────────────────────────────┐
-│ [AgentGroup1] 研发开发       [AgentGroup2] 内容创作       [AgentGroup3] 数据分析 │
-│ [AgentGroup4] 市场营销       [AgentGroup5] 财务管理       [AgentGroup6] 人力资源 │
-│ [AgentGroup7] 法务合规       [AgentGroup8] 客户服务       [AgentGroup9] 供应链   │
-│ [AgentGroup10] 战略规划      [AgentGroupN] 其他职能                              │
+│ [AgentGroup1] 研发开发      [AgentGroup2] 内容创作      [AgentGroup3] 数据分析   │
+│ [AgentGroup4] 市场营销      [AgentGroup5] 财务管理      [AgentGroup6] 人力资源   │
+│ [AgentGroup7] 法务合规      [AgentGroup8] 客户服务      [AgentGroup9] 供应链     │
+│ [AgentGroup10] 战略规划     [AgentGroupN] 其他职能                               │
 └──────────────────────────────────────────────────────────────────────────────┘
 ```
 
