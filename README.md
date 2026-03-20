@@ -23,12 +23,24 @@ Multi-agent systems without governance quickly become chaotic — agents talk to
 
 ```mermaid
 graph TB
-    Boss[Boss] <-->|Request/Response| Gateway
-    Gateway -->|Dispatch| Workers
-    Workers -.->|Action| Gateway
-    Gateway -->|Approve/Reject| Workers
-    Gateway -.->|Alert/Block| Boss
-    Workers -->|Result| Gateway
+    Boss[Boss] <-->|Request/Response| ChatAgent
+    Boss <-->|Alert/Block| WatchAgent
+
+    ChatAgent -->|Dispatch| AgentGroup1
+    ChatAgent -->|Dispatch| AgentGroup2
+    ChatAgent -->|Dispatch| AgentGroupN
+
+    AgentGroup1 -.->|Action| WatchAgent
+    AgentGroup2 -.->|Action| WatchAgent
+    AgentGroupN -.->|Action| WatchAgent
+
+    WatchAgent -->|Approve/Reject| AgentGroup1
+    WatchAgent -->|Approve/Reject| AgentGroup2
+    WatchAgent -->|Approve/Reject| AgentGroupN
+
+    AgentGroup1 -->|Result| ChatAgent
+    AgentGroup2 -->|Result| ChatAgent
+    AgentGroupN -->|Result| ChatAgent
 ```
 
 ### Workflow

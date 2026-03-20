@@ -23,12 +23,24 @@
 
 ```mermaid
 graph TB
-    Boss[Boss] <-->|请求/响应| Gateway
-    Gateway -->|分发| Workers
-    Workers -.->|动作| Gateway
-    Gateway -->|批准/拒绝| Workers
-    Gateway -.->|告警/阻止| Boss
-    Workers -->|结果| Gateway
+    Boss[Boss] <-->|请求/响应| ChatAgent
+    Boss <-->|告警/阻止| WatchAgent
+
+    ChatAgent -->|分发| AgentGroup1
+    ChatAgent -->|分发| AgentGroup2
+    ChatAgent -->|分发| AgentGroupN
+
+    AgentGroup1 -.->|动作| WatchAgent
+    AgentGroup2 -.->|动作| WatchAgent
+    AgentGroupN -.->|动作| WatchAgent
+
+    WatchAgent -->|批准/拒绝| AgentGroup1
+    WatchAgent -->|批准/拒绝| AgentGroup2
+    WatchAgent -->|批准/拒绝| AgentGroupN
+
+    AgentGroup1 -->|结果| ChatAgent
+    AgentGroup2 -->|结果| ChatAgent
+    AgentGroupN -->|结果| ChatAgent
 ```
 
 ### 工作流程
