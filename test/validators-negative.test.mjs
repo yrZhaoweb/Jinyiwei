@@ -5,9 +5,10 @@ import { resolve } from "../lib/paths.mjs";
 import { validatePlugin } from "../lib/validators/plugin.mjs";
 import { validateSkills } from "../lib/validators/skills.mjs";
 import { validateVersion } from "../lib/validators/version.mjs";
+import { validateConfigFile } from "../lib/validators/config.mjs";
 
 describe("validator negative tests", () => {
-  describe("validatePlugin — detects structural and constraint violations", () => {
+  describe("validatePlugin — detects structural violations", () => {
     /** @type {string} */
     let original;
     const pluginPath = resolve("openclaw.plugin.json");
@@ -20,56 +21,81 @@ describe("validator negative tests", () => {
       fs.writeFileSync(pluginPath, original, "utf8");
     });
 
-    it("accepts when bossTitle default is changed to a valid string", () => {
+    it("rejects when id is missing", () => {
       const plugin = JSON.parse(original);
-      plugin.configSchema.properties.bossTitle.default = "Leader";
+      delete plugin.id;
       fs.writeFileSync(pluginPath, JSON.stringify(plugin, null, 2) + "\n", "utf8");
       const result = validatePlugin();
-      assert.strictEqual(result.ok, true);
+      assert.strictEqual(result.ok, false);
+      assert.ok(result.errors.some((e) => e.includes("id")));
     });
 
-    it("accepts when approvalMode default is changed to another valid mode", () => {
+    it("rejects when name is missing", () => {
       const plugin = JSON.parse(original);
-      plugin.configSchema.properties.approvalMode.default = "strict";
+      delete plugin.name;
       fs.writeFileSync(pluginPath, JSON.stringify(plugin, null, 2) + "\n", "utf8");
       const result = validatePlugin();
-      assert.strictEqual(result.ok, true);
+      assert.strictEqual(result.ok, false);
+      assert.ok(result.errors.some((e) => e.includes("name")));
     });
 
-    it("rejects when approvalMode default is an invalid mode", () => {
+    it("rejects when version is missing", () => {
       const plugin = JSON.parse(original);
-      plugin.configSchema.properties.approvalMode.default = "permissive";
+      delete plugin.version;
       fs.writeFileSync(pluginPath, JSON.stringify(plugin, null, 2) + "\n", "utf8");
       const result = validatePlugin();
+      assert.strictEqual(result.ok, false);
+      assert.ok(result.errors.some((e) => e.includes("version")));
+    });
+
+    it("rejects when skills is not an array", () => {
+      const plugin = JSON.parse(original);
+      plugin.skills = "not-an-array";
+      fs.writeFileSync(pluginPath, JSON.stringify(plugin, null, 2) + "\n", "utf8");
+      const result = validatePlugin();
+      assert.strictEqual(result.ok, false);
+      assert.ok(result.errors.some((e) => e.includes("skills")));
+    });
+  });
+
+  describe("validateConfigFile — detects config violations", () => {
+    /** @type {string} */
+    let original;
+    const configPath = resolve("jinyiwei.config.json");
+
+    beforeEach(() => {
+      original = fs.readFileSync(configPath, "utf8");
+    });
+
+    afterEach(() => {
+      fs.writeFileSync(configPath, original, "utf8");
+    });
+
+    it("rejects when approvalMode is invalid", () => {
+      const config = JSON.parse(original);
+      config.approvalMode = "permissive";
+      fs.writeFileSync(configPath, JSON.stringify(config, null, 2) + "\n", "utf8");
+      const result = validateConfigFile();
       assert.strictEqual(result.ok, false);
       assert.ok(result.errors.some((e) => e.includes("approvalMode")));
     });
 
-    it("rejects when a required property is missing", () => {
-      const plugin = JSON.parse(original);
-      delete plugin.configSchema.properties.bossTitle;
-      fs.writeFileSync(pluginPath, JSON.stringify(plugin, null, 2) + "\n", "utf8");
-      const result = validatePlugin();
+    it("rejects when bossTitle is empty", () => {
+      const config = JSON.parse(original);
+      config.bossTitle = "";
+      fs.writeFileSync(configPath, JSON.stringify(config, null, 2) + "\n", "utf8");
+      const result = validateConfigFile();
       assert.strictEqual(result.ok, false);
       assert.ok(result.errors.some((e) => e.includes("bossTitle")));
     });
 
-    it("rejects when bossTitle default is empty string", () => {
-      const plugin = JSON.parse(original);
-      plugin.configSchema.properties.bossTitle.default = "";
-      fs.writeFileSync(pluginPath, JSON.stringify(plugin, null, 2) + "\n", "utf8");
-      const result = validatePlugin();
+    it("rejects when externalChannels is not an array", () => {
+      const config = JSON.parse(original);
+      config.externalChannels = "feishu";
+      fs.writeFileSync(configPath, JSON.stringify(config, null, 2) + "\n", "utf8");
+      const result = validateConfigFile();
       assert.strictEqual(result.ok, false);
-      assert.ok(result.errors.some((e) => e.includes("bossTitle")));
-    });
-
-    it("rejects when externalIngressAgents default contains invalid agent", () => {
-      const plugin = JSON.parse(original);
-      plugin.configSchema.properties.externalIngressAgents.default = ["ChatAgent", "RogueAgent"];
-      fs.writeFileSync(pluginPath, JSON.stringify(plugin, null, 2) + "\n", "utf8");
-      const result = validatePlugin();
-      assert.strictEqual(result.ok, false);
-      assert.ok(result.errors.some((e) => e.includes("externalIngressAgents")));
+      assert.ok(result.errors.some((e) => e.includes("externalChannels")));
     });
   });
 

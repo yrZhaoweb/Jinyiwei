@@ -1,6 +1,6 @@
 {
   "name": "@yrzhao/jinyiwei",
-  "version": "0.5.3",
+  "version": "0.6.0",
   "type": "module",
   "description": "OpenClaw governance plugin and markdown charter pack.",
   "license": "MIT",
@@ -32,6 +32,7 @@
     "manifests/",
     "openclaw-plugin.js",
     "openclaw.plugin.json",
+    "jinyiwei.config.json",
     "rules/",
     "scripts/",
     "skills/",
@@ -43,8 +44,6 @@
     "sync:version": "node ./scripts/sync-version.mjs",
     "validate": "node ./scripts/validate-jinyiwei.mjs",
     "test": "node --test --test-concurrency=1 test/*.test.mjs",
-    "install:openclaw": "node ./scripts/install-openclaw.mjs",
-    "install:dry-run": "node ./scripts/install-openclaw.mjs --dry-run",
     "prepublishOnly": "node ./scripts/sync-version.mjs && node ./scripts/sync-skills-manifest.mjs && node ./scripts/validate-jinyiwei.mjs"
   },
   "openclaw": {

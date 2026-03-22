@@ -26,6 +26,7 @@ describe("openclaw-plugin.js", () => {
         registeredMethod = name;
         registeredHandler = handler;
       },
+      registerTool: () => {},
     };
 
     mod.default(mockApi);
@@ -33,7 +34,28 @@ describe("openclaw-plugin.js", () => {
     assert.strictEqual(typeof registeredHandler, "function");
   });
 
-  it("status handler responds with all config fields", async () => {
+  it("register calls api.registerTool for governance tools", async () => {
+    const mod = await import("../openclaw-plugin.js");
+
+    /** @type {string[]} */
+    const registeredTools = [];
+
+    const mockApi = {
+      getConfig: () => ({}),
+      registerGatewayMethod: () => {},
+      registerTool: (/** @type {{ name: string }} */ tool) => {
+        registeredTools.push(tool.name);
+      },
+    };
+
+    mod.default(mockApi);
+    assert.ok(registeredTools.includes("jinyiwei_dispatch"));
+    assert.ok(registeredTools.includes("jinyiwei_approve"));
+    assert.ok(registeredTools.includes("jinyiwei_reject"));
+    assert.ok(registeredTools.includes("jinyiwei_audit"));
+  });
+
+  it("status handler responds with config fields", async () => {
     const mod = await import("../openclaw-plugin.js");
 
     /** @type {Function | undefined} */
@@ -47,6 +69,7 @@ describe("openclaw-plugin.js", () => {
       registerGatewayMethod: (/** @type {string} */ _name, /** @type {Function} */ handler) => {
         registeredHandler = handler;
       },
+      registerTool: () => {},
     };
 
     mod.default(mockApi);
@@ -63,10 +86,6 @@ describe("openclaw-plugin.js", () => {
     assert.strictEqual(responseData.bossTitle, "Chief");
     assert.strictEqual(responseData.approvalMode, "strict");
     assert.strictEqual(responseData.watchSelfTitle, "锦衣卫");
-    assert.ok(Array.isArray(responseData.externalIngressAgents));
-    assert.ok(Array.isArray(responseData.externalChannels));
-    assert.strictEqual(typeof responseData.autoInstallListedSkills, "boolean");
-    assert.strictEqual(typeof responseData.listedSkillsManifest, "string");
   });
 
   it("uses defaults when getConfig is undefined", async () => {
@@ -79,6 +98,7 @@ describe("openclaw-plugin.js", () => {
       registerGatewayMethod: (/** @type {string} */ _name, /** @type {Function} */ handler) => {
         registeredHandler = handler;
       },
+      registerTool: () => {},
     };
 
     mod.default(mockApi);
@@ -94,9 +114,5 @@ describe("openclaw-plugin.js", () => {
     assert.strictEqual(responseData.bossTitle, "Boss");
     assert.strictEqual(responseData.watchSelfTitle, "锦衣卫");
     assert.strictEqual(responseData.approvalMode, "hybrid");
-    assert.deepStrictEqual(responseData.externalIngressAgents, ["ChatAgent", "WatchAgent"]);
-    assert.deepStrictEqual(responseData.externalChannels, ["feishu", "telegram"]);
-    assert.strictEqual(responseData.autoInstallListedSkills, true);
-    assert.strictEqual(responseData.listedSkillsManifest, "manifests/preinstalled-skills.json");
   });
 });

@@ -7,6 +7,9 @@ import { validateGovernanceSkill, validateChatCharter, validateWatchCharter, val
 import { validateRules } from "../lib/validators/rules.mjs";
 import { validateTemplates } from "../lib/validators/templates.mjs";
 import { validateVersion } from "../lib/validators/version.mjs";
+import { validateConfigFile } from "../lib/validators/config.mjs";
+import { validateGroups } from "../lib/validators/groups.mjs";
+import { loadConfig } from "../lib/config.mjs";
 
 // --- Step 1: required files ---
 const filesResult = validateFiles();
@@ -20,6 +23,8 @@ const validators = [
   validateSkills,
   validatePlugin,
   validateVersion,
+  validateConfigFile,
+  validateGroups,
   validateGovernanceSkill,
   validateChatCharter,
   validateWatchCharter,
@@ -35,20 +40,11 @@ for (const validate of validators) {
 }
 
 if (errors.length > 0) {
-  console.error(
-    JSON.stringify(
-      {
-        ok: false,
-        errors
-      },
-      null,
-      2
-    )
-  );
+  console.error(JSON.stringify({ ok: false, errors }, null, 2));
   process.exit(1);
 }
 
-const plugin = JSON.parse(fs.readFileSync(resolve("openclaw.plugin.json"), "utf8"));
+const config = loadConfig();
 const manifest = JSON.parse(fs.readFileSync(resolve("manifests/preinstalled-skills.json"), "utf8"));
 
 console.log(
@@ -58,12 +54,11 @@ console.log(
       skills: manifest.skills.length,
       checkedFiles: requiredFiles.length,
       governance: {
-        bossTitle: plugin.configSchema.properties.bossTitle.default,
-        watchSelfTitle: plugin.configSchema.properties.watchSelfTitle.default,
-        approvalMode: plugin.configSchema.properties.approvalMode.default,
-        externalIngressAgents: plugin.configSchema.properties.externalIngressAgents.default,
-        externalChannels: plugin.configSchema.properties.externalChannels.default
-      }
+        bossTitle: config.bossTitle,
+        watchSelfTitle: config.watchSelfTitle,
+        approvalMode: config.approvalMode,
+        externalChannels: config.externalChannels,
+      },
     },
     null,
     2

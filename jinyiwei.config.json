@@ -1,0 +1,14 @@
+{
+  "bossTitle": "Boss",
+  "watchSelfTitle": "锦衣卫",
+  "approvalMode": "hybrid",
+  "models": {
+    "chat": "",
+    "watch": "",
+    "groups": {
+      "dev": "",
+      "content": ""
+    }
+  },
+  "externalChannels": ["feishu", "telegram"]
+}

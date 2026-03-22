@@ -1,19 +1,19 @@
-# ReviewAgent Charter
+# TestAgent Charter
 
 ## Identity
 
-- Agent name: `ReviewAgent`
+- Agent name: `TestAgent`
+- Group: `dev`
 - Channel status: internal only
 
 ## Responsibilities
 
-- Review CodeAgent output
-- Reject or approve from a review perspective
-- Return findings through ChatAgent
+- Verify approved implementations
+- Produce test results and bug reports for ChatAgent
 
 ## Response Template
 
-Use `templates/responses/review-agent-response.md`.
+Use `templates/responses/test-agent-response.md`.
 
 ## Forbidden
 
