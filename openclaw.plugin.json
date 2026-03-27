@@ -1,7 +1,7 @@
 {
   "id": "jinyiwei",
   "name": "Jinyiwei",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "Governance, supervision, and markdown-controlled agent hierarchy for OpenClaw.",
   "skills": [
     "skills/jinyiwei-governance"
@@ -22,7 +22,11 @@
       },
       "approvalMode": {
         "type": "string",
-        "enum": ["strict", "graded", "hybrid"],
+        "enum": [
+          "strict",
+          "graded",
+          "hybrid"
+        ],
         "description": "Approval workflow mode",
         "default": "hybrid"
       },
@@ -39,16 +43,23 @@
           },
           "groups": {
             "type": "object",
-            "additionalProperties": { "type": "string" },
+            "additionalProperties": {
+              "type": "string"
+            },
             "description": "LLM model per agent group"
           }
         }
       },
       "externalChannels": {
         "type": "array",
-        "items": { "type": "string" },
+        "items": {
+          "type": "string"
+        },
         "description": "Channels external agents can access",
-        "default": ["feishu", "telegram"]
+        "default": [
+          "feishu",
+          "telegram"
+        ]
       }
     }
   }
