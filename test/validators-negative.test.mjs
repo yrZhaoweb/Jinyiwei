@@ -6,6 +6,9 @@ import { validatePlugin } from "../lib/validators/plugin.mjs";
 import { validateSkills } from "../lib/validators/skills.mjs";
 import { validateVersion } from "../lib/validators/version.mjs";
 import { validateConfigFile } from "../lib/validators/config.mjs";
+import { validateRules } from "../lib/validators/rules.mjs";
+import { validateTemplates } from "../lib/validators/templates.mjs";
+import { validateGroups } from "../lib/validators/groups.mjs";
 
 describe("validator negative tests", () => {
   describe("validatePlugin — detects structural violations", () => {
@@ -149,6 +152,72 @@ describe("validator negative tests", () => {
       const result = validateVersion();
       assert.strictEqual(result.ok, false);
       assert.ok(result.errors.some((e) => e.includes("does not match")));
+    });
+  });
+
+  describe("validateRules — detects missing rule content", () => {
+    /** @type {string} */
+    let original;
+    const rulePath = resolve("rules/addressing.md");
+
+    beforeEach(() => {
+      original = fs.readFileSync(rulePath, "utf8");
+    });
+
+    afterEach(() => {
+      fs.writeFileSync(rulePath, original, "utf8");
+    });
+
+    it("rejects when Boss naming is removed from addressing rule", () => {
+      const modified = original.replace(/`Boss`/g, "REMOVED");
+      fs.writeFileSync(rulePath, modified, "utf8");
+      const result = validateRules();
+      assert.strictEqual(result.ok, false);
+      assert.ok(result.errors.some((e) => e.includes("Boss")));
+    });
+  });
+
+  describe("validateTemplates — detects missing template fields", () => {
+    /** @type {string} */
+    let original;
+    const templatePath = resolve("templates/dispatch-packet.md");
+
+    beforeEach(() => {
+      original = fs.readFileSync(templatePath, "utf8");
+    });
+
+    afterEach(() => {
+      fs.writeFileSync(templatePath, original, "utf8");
+    });
+
+    it("rejects when packet_id field is removed from dispatch template", () => {
+      const modified = original.replace(/`packet_id`/g, "REMOVED");
+      fs.writeFileSync(templatePath, modified, "utf8");
+      const result = validateTemplates();
+      assert.strictEqual(result.ok, false);
+      assert.ok(result.errors.some((e) => e.includes("packet_id")));
+    });
+  });
+
+  describe("validateGroups — detects missing charter sections", () => {
+    /** @type {string} */
+    let original;
+    const charterPath = resolve("agents/groups/dev/code/AGENT.md");
+
+    beforeEach(() => {
+      original = fs.readFileSync(charterPath, "utf8");
+    });
+
+    afterEach(() => {
+      fs.writeFileSync(charterPath, original, "utf8");
+    });
+
+    it("rejects when Identity section is removed from an agent charter", () => {
+      const modified = original.replace("## Identity", "## RemovedSection");
+      fs.writeFileSync(charterPath, modified, "utf8");
+      const result = validateGroups();
+      assert.strictEqual(result.ok, false);
+      assert.ok(result.errors.some((e) => e.includes("Identity")));
     });
   });
 });

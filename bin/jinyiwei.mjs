@@ -34,6 +34,7 @@ function printHelp() {
   console.log(`    ${log.yellow("--copy")}           ${t("cli.options.copy")}`);
   console.log(`    ${log.yellow("--fail-fast")}      ${t("cli.options.failFast")}`);
   console.log(`    ${log.yellow("--json")}           ${t("cli.options.json")}`);
+  console.log(`    ${log.yellow("--verbose")}        ${t("cli.options.verbose")}`);
   console.log();
   console.log(`  ${log.bold(t("cli.examples"))}`);
   console.log();
@@ -44,6 +45,11 @@ function printHelp() {
 }
 
 const [command, ...args] = process.argv.slice(2);
+
+// Parse global flags
+if (args.includes("--verbose")) {
+  log.setLevel("verbose");
+}
 
 if (command === "help" || command === "--help" || command === "-h") {
   printHelp();

@@ -50,9 +50,39 @@ describe("openclaw-plugin.js", () => {
 
     mod.default(mockApi);
     assert.ok(registeredTools.includes("jinyiwei_dispatch"));
+    assert.ok(registeredTools.includes("jinyiwei_review"));
     assert.ok(registeredTools.includes("jinyiwei_approve"));
     assert.ok(registeredTools.includes("jinyiwei_reject"));
     assert.ok(registeredTools.includes("jinyiwei_audit"));
+  });
+
+  it("review tool rejects unknown action types", async () => {
+    const mod = await import("../openclaw-plugin.js");
+
+    /** @type {Record<string, any>} */
+    const registeredTools = {};
+
+    const mockApi = {
+      getConfig: () => ({}),
+      registerGatewayMethod: () => {},
+      registerTool: (tool) => {
+        registeredTools[tool.name] = tool;
+      },
+    };
+
+    mod.default(mockApi);
+
+    const result = await registeredTools.jinyiwei_review.execute("1", {
+      decision_id: "dec-1",
+      packet_id: "pkt-1",
+      target_agent: "CodeAgent",
+      action_type: "unknown.action",
+      risk_hint: "low",
+      goal: "Test unknown action",
+    });
+
+    assert.match(result.content[0].text, /`decision`: reject/);
+    assert.match(result.content[0].text, /rules\/action-catalog\.md/);
   });
 
   it("status handler responds with config fields", async () => {

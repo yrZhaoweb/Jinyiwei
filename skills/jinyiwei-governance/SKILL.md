@@ -28,10 +28,10 @@ Before dispatching or approving any task, load these charters:
 
 - `{baseDir}/../../agents/chat/AGENT.md`
 - `{baseDir}/../../agents/watch/AGENT.md`
-- `{baseDir}/../../agents/code/AGENT.md`
-- `{baseDir}/../../agents/review/AGENT.md`
-- `{baseDir}/../../agents/test/AGENT.md`
-- `{baseDir}/../../agents/ui/AGENT.md`
+- `{baseDir}/../../agents/groups/dev/code/AGENT.md`
+- `{baseDir}/../../agents/groups/dev/review/AGENT.md`
+- `{baseDir}/../../agents/groups/dev/test/AGENT.md`
+- `{baseDir}/../../agents/groups/content/ui/AGENT.md`
 
 Then load these rules:
 

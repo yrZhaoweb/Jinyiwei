@@ -103,17 +103,17 @@ jinyiwei init                                     # 交互式配置
 
 ## 配置
 
-Jinyiwei 通过 `openclaw.plugin.json` 配置。运行 `jinyiwei init` 进行交互式设置，或直接编辑文件：
+Jinyiwei 的项目级治理配置位于 `jinyiwei.config.json`。运行 `jinyiwei init` 进行交互式设置，或直接编辑该文件。`openclaw.plugin.json` 仍然负责插件清单和提供给 OpenClaw 的运行时 schema。
 
 | 参数 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
 | `bossTitle` | `string` | `"Boss"` | 代理如何称呼用户 |
 | `watchSelfTitle` | `string` | `"锦衣卫"` | WatchAgent 向 Boss 自我介绍的称谓 |
 | `approvalMode` | `string` | `"hybrid"` | 审批策略：`strict`、`graded` 或 `hybrid` |
-| `externalIngressAgents` | `string[]` | `["ChatAgent", "WatchAgent"]` | 允许访问外部通道的代理 |
 | `externalChannels` | `string[]` | `["feishu", "telegram"]` | 允许的外部通信通道 |
-| `autoInstallListedSkills` | `boolean` | `true` | 启动时自动安装清单中的技能 |
-| `listedSkillsManifest` | `string` | `"manifests/preinstalled-skills.json"` | 技能安装清单路径 |
+| `models.chat` | `string` | `""` | `ChatAgent` 使用的模型 |
+| `models.watch` | `string` | `""` | `WatchAgent` 使用的模型 |
+| `models.groups.<name>` | `string` | `""` | 每个内部工作组共享的模型 |
 
 ### 本地化
 

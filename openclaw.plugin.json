@@ -9,6 +9,47 @@
   "configSchema": {
     "type": "object",
     "additionalProperties": false,
-    "properties": {}
+    "properties": {
+      "bossTitle": {
+        "type": "string",
+        "description": "Title used to address the human operator",
+        "default": "Boss"
+      },
+      "watchSelfTitle": {
+        "type": "string",
+        "description": "Self-referencing title for WatchAgent",
+        "default": "锦衣卫"
+      },
+      "approvalMode": {
+        "type": "string",
+        "enum": ["strict", "graded", "hybrid"],
+        "description": "Approval workflow mode",
+        "default": "hybrid"
+      },
+      "models": {
+        "type": "object",
+        "properties": {
+          "chat": {
+            "type": "string",
+            "description": "LLM model for ChatAgent"
+          },
+          "watch": {
+            "type": "string",
+            "description": "LLM model for WatchAgent"
+          },
+          "groups": {
+            "type": "object",
+            "additionalProperties": { "type": "string" },
+            "description": "LLM model per agent group"
+          }
+        }
+      },
+      "externalChannels": {
+        "type": "array",
+        "items": { "type": "string" },
+        "description": "Channels external agents can access",
+        "default": ["feishu", "telegram"]
+      }
+    }
   }
 }

@@ -103,17 +103,17 @@ jinyiwei init                                     # configure interactively
 
 ## Configuration
 
-Jinyiwei is configured via `openclaw.plugin.json`. Run `jinyiwei init` for interactive setup, or edit the file directly:
+Jinyiwei's project-level governance config lives in `jinyiwei.config.json`. Run `jinyiwei init` for interactive setup, or edit the file directly. `openclaw.plugin.json` remains the plugin manifest and runtime schema exposed to OpenClaw.
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
 | `bossTitle` | `string` | `"Boss"` | How agents address the user |
 | `watchSelfTitle` | `string` | `"锦衣卫"` | How WatchAgent introduces itself to Boss |
 | `approvalMode` | `string` | `"hybrid"` | Approval policy: `strict`, `graded`, or `hybrid` |
-| `externalIngressAgents` | `string[]` | `["ChatAgent", "WatchAgent"]` | Agents allowed to access external channels |
 | `externalChannels` | `string[]` | `["feishu", "telegram"]` | Allowed external communication channels |
-| `autoInstallListedSkills` | `boolean` | `true` | Auto-install skills from the manifest on bootstrap |
-| `listedSkillsManifest` | `string` | `"manifests/preinstalled-skills.json"` | Path to the skills install manifest |
+| `models.chat` | `string` | `""` | Model used by `ChatAgent` |
+| `models.watch` | `string` | `""` | Model used by `WatchAgent` |
+| `models.groups.<name>` | `string` | `""` | Shared model per internal agent group |
 
 ### Localization
 

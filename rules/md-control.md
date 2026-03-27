@@ -6,6 +6,7 @@ Required control files:
 
 - `agents/*/AGENT.md`
 - `rules/*.md`
+- `templates/*.md`
 - `skills/jinyiwei-governance/SKILL.md`
 - `manifests/preinstalled-skills.json`
 
