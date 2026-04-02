@@ -15,6 +15,7 @@ import { startGuideCommand } from "../lib/commands/start-guide.mjs";
 import { validateCommand } from "../lib/commands/validate.mjs";
 import { verifyCommand } from "../lib/commands/verify.mjs";
 import { syncCommand } from "../lib/commands/sync.mjs";
+import { updateCommand } from "../lib/commands/update.mjs";
 import * as log from "../lib/log.mjs";
 
 const pkg = JSON.parse(fs.readFileSync(resolve("package.json"), "utf8"));
@@ -34,6 +35,7 @@ function printHelp() {
   console.log(`    ${log.cyan("jinyiwei sync")}                  ${t("cli.commands.sync")}`);
   console.log(`    ${log.cyan("jinyiwei status")}                ${t("cli.commands.status")}`);
   console.log(`    ${log.cyan("jinyiwei init")}                  ${t("cli.commands.init")}`);
+  console.log(`    ${log.cyan("jinyiwei update")}               ${t("cli.commands.update")}`);
   console.log(`    ${log.cyan("jinyiwei help")}                  ${t("cli.commands.help")}`);
   console.log();
   console.log(`  ${log.bold(t("cli.installOptions"))}`);
@@ -131,6 +133,10 @@ switch (command) {
 
   case "init":
     exitCode = await initCommand();
+    break;
+
+  case "update":
+    exitCode = updateCommand(args);
     break;
 
   default:
