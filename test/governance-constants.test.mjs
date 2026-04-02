@@ -36,8 +36,8 @@ describe("governance constants", () => {
     assert.strictEqual(DEFAULT_BOSS_TITLE, "Boss");
   });
 
-  it("DEFAULT_WATCH_SELF_TITLE is '锦衣卫'", () => {
-    assert.strictEqual(DEFAULT_WATCH_SELF_TITLE, "锦衣卫");
+  it("DEFAULT_WATCH_SELF_TITLE is 'WatchAgent'", () => {
+    assert.strictEqual(DEFAULT_WATCH_SELF_TITLE, "WatchAgent");
   });
 
   it("DEFAULT_APPROVAL_MODE is 'hybrid'", () => {

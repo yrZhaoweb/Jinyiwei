@@ -49,14 +49,14 @@ describe("initCommand validation paths", () => {
   it("sanitizeConfig normalizes whitespace in titles", () => {
     const config = sanitizeConfig({
       bossTitle: "  CustomBoss  ",
-      watchSelfTitle: "  锦衣卫  ",
+      watchSelfTitle: "  WatchAgent  ",
       approvalMode: "  hybrid  ",
       models: { chat: "  gpt-4  ", watch: "  claude  ", groups: {} },
       externalChannels: ["  feishu  ", "  telegram  "],
     });
 
     assert.strictEqual(config.bossTitle, "CustomBoss");
-    assert.strictEqual(config.watchSelfTitle, "锦衣卫");
+    assert.strictEqual(config.watchSelfTitle, "WatchAgent");
     assert.strictEqual(config.approvalMode, "hybrid");
     assert.strictEqual(config.models.chat, "gpt-4");
     assert.strictEqual(config.models.watch, "claude");
@@ -67,7 +67,7 @@ describe("initCommand validation paths", () => {
     const config = sanitizeConfig({
       ...sanitizeConfig({
         bossTitle: "Boss",
-        watchSelfTitle: "锦衣卫",
+        watchSelfTitle: "WatchAgent",
         approvalMode: "hybrid",
         models: { chat: "", watch: "", groups: {} },
         externalChannels: ["feishu", "telegram", "feishu"],
@@ -81,7 +81,7 @@ describe("initCommand validation paths", () => {
   it("sanitizeConfig filters empty external channels", () => {
     const config = sanitizeConfig({
       bossTitle: "Boss",
-      watchSelfTitle: "锦衣卫",
+      watchSelfTitle: "WatchAgent",
       approvalMode: "hybrid",
       models: { chat: "", watch: "", groups: {} },
       externalChannels: ["feishu", "", "  "],
@@ -94,7 +94,7 @@ describe("initCommand validation paths", () => {
     const config = sanitizeConfig({});
 
     assert.strictEqual(config.bossTitle, "Boss");
-    assert.strictEqual(config.watchSelfTitle, "锦衣卫");
+    assert.strictEqual(config.watchSelfTitle, "WatchAgent");
     assert.strictEqual(config.approvalMode, "hybrid");
     assert.deepStrictEqual(config.externalChannels, ["feishu", "telegram"]);
   });
@@ -103,7 +103,7 @@ describe("initCommand validation paths", () => {
     // After sanitization, approvalMode should always be valid
     const config = sanitizeConfig({
       bossTitle: "Boss",
-      watchSelfTitle: "锦衣卫",
+      watchSelfTitle: "WatchAgent",
       approvalMode: "invalid",
       models: { chat: "", watch: "", groups: {} },
       externalChannels: [],
@@ -117,7 +117,7 @@ describe("initCommand validation paths", () => {
     for (const mode of ["strict", "graded", "hybrid"]) {
       const config = sanitizeConfig({
         bossTitle: "Boss",
-        watchSelfTitle: "锦衣卫",
+        watchSelfTitle: "WatchAgent",
         approvalMode: mode,
         models: { chat: "", watch: "", groups: {} },
         externalChannels: [],
@@ -137,7 +137,7 @@ describe("initCommand validation paths", () => {
   it("validateConfig catches non-array externalChannels", () => {
     const config = {
       bossTitle: "Boss",
-      watchSelfTitle: "锦衣卫",
+      watchSelfTitle: "WatchAgent",
       approvalMode: "hybrid",
       models: { chat: "", watch: "", groups: {} },
       externalChannels: "not-an-array",

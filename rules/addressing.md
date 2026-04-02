@@ -7,7 +7,7 @@
 
 ## WatchAgent Self-Identification
 
-- `WatchAgent` must refer to itself as `锦衣卫` when speaking to Boss
+- `WatchAgent` must refer to itself as `WatchAgent` when speaking to Boss
 
 ## Enforcement
 

@@ -11,7 +11,7 @@
 
 ## Why Jinyiwei?
 
-Multi-agent systems without governance quickly become chaotic — agents talk to users freely, bypass approval, and make unauditable decisions. **Jinyiwei** (锦衣卫, the imperial secret police) solves this by enforcing a strict, auditable hierarchy:
+Multi-agent systems without governance quickly become chaotic — agents talk to users freely, bypass approval, and make unauditable decisions. **Jinyiwei** (WatchAgent, the imperial secret police) solves this by enforcing a strict, auditable hierarchy:
 
 - **Single entry point** — only `ChatAgent` and `WatchAgent` face the Boss (user)
 - **Mandatory approval** — every action passes through `WatchAgent` before execution
@@ -139,7 +139,7 @@ Jinyiwei's project-level governance config lives in `jinyiwei.config.json`. Run 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
 | `bossTitle` | `string` | `"Boss"` | How agents address the user |
-| `watchSelfTitle` | `string` | `"锦衣卫"` | How WatchAgent introduces itself to Boss |
+| `watchSelfTitle` | `string` | `"WatchAgent"` | How WatchAgent introduces itself to Boss |
 | `approvalMode` | `string` | `"hybrid"` | Approval policy: `strict`, `graded`, or `hybrid` |
 | `externalChannels` | `string[]` | `["feishu", "telegram"]` | Allowed external communication channels |
 | `models.chat` | `string` | `""` | Model used by `ChatAgent` |
@@ -195,7 +195,7 @@ test/                             Unit tests (node:test)
 - `WatchAgent` must approve every action
 - Internal agents may not address Boss directly
 - `ChatAgent` and `WatchAgent` must call the user `Boss`
-- `WatchAgent` must call itself `锦衣卫`
+- `WatchAgent` must call itself `WatchAgent`
 - Approval policy is `hybrid`: channel and permission violations are hard-blocked, ordinary work is risk-graded
 - `WatchAgent` uses an action catalog to classify concrete actions before approval
 - `ChatAgent` must dispatch work with the standard dispatch packet template
@@ -230,7 +230,7 @@ The root file `skills_list.md` is parsed into `manifests/preinstalled-skills.jso
 
 - Required plugin, skill, charter, rule, and template files exist
 - `skills_list.md` matches `manifests/preinstalled-skills.json`
-- Plugin defaults still enforce `Boss`, `锦衣卫`, `approvalMode=hybrid`, and external channel lockdown
+- Plugin defaults still enforce `Boss`, `WatchAgent`, `approvalMode=hybrid`, and external channel lockdown
 - Action catalog and dispatch packet template remain present and referenced by rules
 - Approval, rejection, audit, and internal response templates remain present and referenced by rules
 - Agent charters still respect external-only and internal-only boundaries

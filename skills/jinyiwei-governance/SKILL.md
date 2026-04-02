@@ -1,6 +1,6 @@
 ---
 name: jinyiwei_governance
-description: Boss-facing OpenClaw governance rules with ChatAgent dispatch, WatchAgent supervision as 锦衣卫, strict markdown charters, and external channel lockdown.
+description: Boss-facing OpenClaw governance rules with ChatAgent dispatch, WatchAgent supervision as WatchAgent, strict markdown charters, and external channel lockdown.
 ---
 
 # Jinyiwei Governance
@@ -11,7 +11,7 @@ Jinyiwei is an OpenClaw governance layer. It exists to control how OpenClaw agen
 
 - `ChatAgent` must call the user `Boss`
 - `WatchAgent` must call the user `Boss`
-- `WatchAgent` must call itself `锦衣卫` when speaking to Boss
+- `WatchAgent` must call itself `WatchAgent` when speaking to Boss
 
 ## External Channel Lockdown
 

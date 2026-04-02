@@ -55,7 +55,7 @@ Examples:
 - changing agent charters or governance rules
 - expanding external-channel access beyond `ChatAgent` and `WatchAgent`
 - disabling WatchAgent review requirements
-- changing plugin defaults that affect `Boss`, `锦衣卫`, or approval mode
+- changing plugin defaults that affect `Boss`, `WatchAgent`, or approval mode
 
 Decision:
 

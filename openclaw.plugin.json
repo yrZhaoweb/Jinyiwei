@@ -18,7 +18,17 @@
       "watchSelfTitle": {
         "type": "string",
         "description": "Self-referencing title for WatchAgent",
-        "default": "锦衣卫"
+        "default": "WatchAgent"
+      },
+      "chatAgentName": {
+        "type": "string",
+        "description": "Display name for ChatAgent",
+        "default": "ChatAgent"
+      },
+      "watchAgentName": {
+        "type": "string",
+        "description": "Display name for WatchAgent",
+        "default": "WatchAgent"
       },
       "approvalMode": {
         "type": "string",

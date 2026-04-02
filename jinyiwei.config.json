@@ -1,6 +1,6 @@
 {
   "bossTitle": "Boss",
-  "watchSelfTitle": "锦衣卫",
+  "watchSelfTitle": "WatchAgent",
   "approvalMode": "hybrid",
   "models": {
     "chat": "",

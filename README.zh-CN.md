@@ -1,4 +1,4 @@
-# Jinyiwei（锦衣卫）
+# Jinyiwei（WatchAgent）
 
 [![npm version](https://img.shields.io/npm/v/@yrzhao/jinyiwei.svg)](https://www.npmjs.com/package/@yrzhao/jinyiwei)
 [![CI](https://github.com/yrzhao/Jinyiwei/actions/workflows/validate.yml/badge.svg)](https://github.com/yrzhao/Jinyiwei/actions)
@@ -28,11 +28,11 @@ jinyiwei start-guide
 ```
 
 `setup` 是面向小白的主路径，`install` 仍然保留给高级用户或脚本场景。
-默认情况下，`setup` 会把 OpenClaw 的入口对齐到 `ChatAgent`，让新手装完就能直接从锦衣卫入口开始使用。如果后面想切换，可以执行 `jinyiwei configure --set-default-entry chat`、`jinyiwei configure --set-default-entry watch` 或 `jinyiwei configure --keep-main`。
+默认情况下，`setup` 会把 OpenClaw 的入口对齐到 `ChatAgent`，让新手装完就能直接从WatchAgent入口开始使用。如果后面想切换，可以执行 `jinyiwei configure --set-default-entry chat`、`jinyiwei configure --set-default-entry watch` 或 `jinyiwei configure --keep-main`。
 
 ## 为什么需要 Jinyiwei？
 
-多代理系统如果缺乏治理，很快就会陷入混乱 — 代理随意与用户对话、绕过审批、做出无法审计的决策。**Jinyiwei**（锦衣卫）通过强制执行严格、可审计的层级结构来解决这个问题：
+多代理系统如果缺乏治理，很快就会陷入混乱 — 代理随意与用户对话、绕过审批、做出无法审计的决策。**Jinyiwei**（WatchAgent）通过强制执行严格、可审计的层级结构来解决这个问题：
 
 - **单一入口** — 只有 `ChatAgent` 和 `WatchAgent` 面向 Boss（用户）
 - **强制审批** — 每个操作在执行前都必须经过 `WatchAgent` 审批
@@ -139,7 +139,7 @@ Jinyiwei 的项目级治理配置位于 `jinyiwei.config.json`。运行 `jinyiwe
 | 参数 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
 | `bossTitle` | `string` | `"Boss"` | 代理如何称呼用户 |
-| `watchSelfTitle` | `string` | `"锦衣卫"` | WatchAgent 向 Boss 自我介绍的称谓 |
+| `watchSelfTitle` | `string` | `"WatchAgent"` | WatchAgent 向 Boss 自我介绍的称谓 |
 | `approvalMode` | `string` | `"hybrid"` | 审批策略：`strict`、`graded` 或 `hybrid` |
 | `externalChannels` | `string[]` | `["feishu", "telegram"]` | 允许的外部通信通道 |
 | `models.chat` | `string` | `""` | `ChatAgent` 使用的模型 |
@@ -156,7 +156,7 @@ Jinyiwei 的项目级治理配置位于 `jinyiwei.config.json`。运行 `jinyiwe
 - `WatchAgent` 必须审批每个操作
 - 内部代理不得直接与 Boss 交流
 - `ChatAgent` 和 `WatchAgent` 必须称呼用户为 `Boss`
-- `WatchAgent` 必须自称 `锦衣卫`
+- `WatchAgent` 必须自称 `WatchAgent`
 - 审批策略为 `hybrid`：通道和权限违规被硬阻断，普通工作按风险分级
 - `WatchAgent` 使用操作目录对具体操作进行分类后再审批
 - `ChatAgent` 必须使用标准分发包模板分派工作
@@ -177,7 +177,7 @@ Jinyiwei 会在 OpenClaw 上建立一层清晰的治理边界：
 - `doctor` 用来发现哪里配置错了
 - `verify` 用来确认整个流程是否真的可用
 - `start-guide` 用来告诉新用户第一句应该怎么说
-- `configure --set-default-entry chat` 可以随时把 OpenClaw 入口重新切回锦衣卫主流程
+- `configure --set-default-entry chat` 可以随时把 OpenClaw 入口重新切回WatchAgent主流程
 
 完整使用指南（从安装到日常操作）请参阅 **[USAGE_GUIDE.zh-CN.md](./USAGE_GUIDE.zh-CN.md)**。
 
@@ -191,7 +191,7 @@ Jinyiwei 会在 OpenClaw 上建立一层清晰的治理边界：
 
 - 必需的插件、技能、章程、规则和模板文件是否存在
 - `skills_list.md` 与 `manifests/preinstalled-skills.json` 是否同步
-- 插件默认值是否仍然执行 `Boss`、`锦衣卫`、`approvalMode=hybrid` 和外部通道锁定
+- 插件默认值是否仍然执行 `Boss`、`WatchAgent`、`approvalMode=hybrid` 和外部通道锁定
 - 操作目录和分发包模板是否存在并被规则引用
 - 审批、拒绝、审计和内部响应模板是否存在并被规则引用
 - 代理章程是否仍然遵守仅外部和仅内部的边界

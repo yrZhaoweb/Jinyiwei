@@ -173,7 +173,7 @@ jinyiwei init
 向导会依次询问：
 
 - Boss 称谓（默认：`Boss`）
-- WatchAgent 自称（默认：`锦衣卫`）
+- WatchAgent 自称（默认：`WatchAgent`）
 - 审批模式（默认：`hybrid`）
 - 允许的外部渠道（默认：`feishu,telegram`）
 - ChatAgent 模型

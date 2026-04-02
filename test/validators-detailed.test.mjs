@@ -75,12 +75,12 @@ describe("validateRules", () => {
     assert.strictEqual(result.ok, true, `Errors: ${result.errors.join("; ")}`);
   });
 
-  it("validates addressing rule contains Boss and 锦衣卫", () => {
+  it("validates addressing rule contains Boss and WatchAgent", () => {
     const result = validateRules();
     if (result.ok) {
       const addressingRule = fs.readFileSync(resolve("rules/addressing.md"), "utf8");
       assert.ok(addressingRule.includes("`Boss`"));
-      assert.ok(addressingRule.includes("`锦衣卫`"));
+      assert.ok(addressingRule.includes("`WatchAgent`"));
     }
   });
 

@@ -218,7 +218,7 @@ $ npm run validate
 $ node bin/jinyiwei.mjs status
   Governance Status
   Boss title         Boss
-  Watch self-title   锦衣卫
+  Watch self-title   WatchAgent
   Approval mode      hybrid
   Ext. channels      feishu, telegram
   ...

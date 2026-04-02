@@ -39,7 +39,7 @@ describe("config", () => {
         try {
           const config = loadConfig();
           assert.strictEqual(config.bossTitle, "Boss");
-          assert.strictEqual(config.watchSelfTitle, "锦衣卫");
+          assert.strictEqual(config.watchSelfTitle, "WatchAgent");
           assert.strictEqual(config.approvalMode, "hybrid");
         } finally {
           fs.renameSync(tmpPath, configPath);
@@ -271,7 +271,7 @@ describe("config", () => {
     it("returns a valid default configuration", () => {
       const config = defaultConfig();
       assert.strictEqual(config.bossTitle, "Boss");
-      assert.strictEqual(config.watchSelfTitle, "锦衣卫");
+      assert.strictEqual(config.watchSelfTitle, "WatchAgent");
       assert.strictEqual(config.approvalMode, "hybrid");
       assert.deepStrictEqual(config.externalChannels, ["feishu", "telegram"]);
       assert.ok(typeof config.models === "object");

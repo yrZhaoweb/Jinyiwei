@@ -168,7 +168,7 @@ jinyiwei init
 
 The wizard asks for:
 - Boss title (default: `Boss`)
-- WatchAgent self-title (default: `锦衣卫`)
+- WatchAgent self-title (default: `WatchAgent`)
 - Approval mode (default: `hybrid`)
 - Allowed external channels (default: `feishu,telegram`)
 - ChatAgent model

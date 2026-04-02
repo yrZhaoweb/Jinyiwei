@@ -115,7 +115,7 @@ describe("openclaw-plugin.js", () => {
     assert.strictEqual(responseData.enabled, true);
     assert.strictEqual(responseData.bossTitle, "Chief");
     assert.strictEqual(responseData.approvalMode, "strict");
-    assert.strictEqual(responseData.watchSelfTitle, "锦衣卫");
+    assert.strictEqual(responseData.watchSelfTitle, "WatchAgent");
   });
 
   it("uses defaults when getConfig is undefined", async () => {
@@ -142,7 +142,7 @@ describe("openclaw-plugin.js", () => {
     });
 
     assert.strictEqual(responseData.bossTitle, "Boss");
-    assert.strictEqual(responseData.watchSelfTitle, "锦衣卫");
+    assert.strictEqual(responseData.watchSelfTitle, "WatchAgent");
     assert.strictEqual(responseData.approvalMode, "hybrid");
   });
 });

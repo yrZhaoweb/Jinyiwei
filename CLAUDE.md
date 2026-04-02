@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What is Jinyiwei
 
-Jinyiwei (锦衣卫) is a governance plugin for OpenClaw multi-agent systems. It enforces a strict, auditable agent hierarchy where ChatAgent and WatchAgent face the user, internal agents are organized into groups (dev, content, etc.), all actions require approval via WatchAgent, and governance rules are defined as markdown files validated by CI.
+Jinyiwei (WatchAgent) is a governance plugin for OpenClaw multi-agent systems. It enforces a strict, auditable agent hierarchy where ChatAgent and WatchAgent face the user, internal agents are organized into groups (dev, content, etc.), all actions require approval via WatchAgent, and governance rules are defined as markdown files validated by CI.
 
 ## Commands
 
