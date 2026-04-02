@@ -22,6 +22,10 @@ describe("CLI smoke tests", () => {
     const r = cli(["help"]);
     assert.strictEqual(r.code, 0);
     assert.ok(r.stdout.includes("jinyiwei install"));
+    assert.ok(r.stdout.includes("jinyiwei setup"));
+    assert.ok(r.stdout.includes("jinyiwei doctor"));
+    assert.ok(r.stdout.includes("jinyiwei verify"));
+    assert.ok(r.stdout.includes("jinyiwei start-guide"));
     assert.ok(r.stdout.includes("jinyiwei validate"));
   });
 

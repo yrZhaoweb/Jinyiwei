@@ -8,7 +8,12 @@ import { statusCommand } from "../lib/commands/status.mjs";
 import { installCommand } from "../lib/commands/install.mjs";
 import { uninstallCommand } from "../lib/commands/uninstall.mjs";
 import { initCommand } from "../lib/commands/init.mjs";
+import { configureCommand } from "../lib/commands/configure.mjs";
+import { doctorCommand } from "../lib/commands/doctor.mjs";
+import { setupCommand } from "../lib/commands/setup.mjs";
+import { startGuideCommand } from "../lib/commands/start-guide.mjs";
 import { validateCommand } from "../lib/commands/validate.mjs";
+import { verifyCommand } from "../lib/commands/verify.mjs";
 import { syncCommand } from "../lib/commands/sync.mjs";
 import * as log from "../lib/log.mjs";
 
@@ -19,6 +24,11 @@ function printHelp() {
   console.log(`  ${log.bold(t("cli.usage"))}`);
   console.log();
   console.log(`    ${log.cyan("jinyiwei install")} ${log.dim("<workspace>")}   ${t("cli.commands.install")}`);
+  console.log(`    ${log.cyan("jinyiwei setup")} ${log.dim("[workspace]")}      ${t("cli.commands.setup")}`);
+  console.log(`    ${log.cyan("jinyiwei configure")}                ${t("cli.commands.configure")}`);
+  console.log(`    ${log.cyan("jinyiwei doctor")}                   ${t("cli.commands.doctor")}`);
+  console.log(`    ${log.cyan("jinyiwei verify")}                   ${t("cli.commands.verify")}`);
+  console.log(`    ${log.cyan("jinyiwei start-guide")}              ${t("cli.commands.startGuide")}`);
   console.log(`    ${log.cyan("jinyiwei uninstall")}             ${t("cli.commands.uninstall")}`);
   console.log(`    ${log.cyan("jinyiwei validate")}              ${t("cli.commands.validate")}`);
   console.log(`    ${log.cyan("jinyiwei sync")}                  ${t("cli.commands.sync")}`);
@@ -33,13 +43,19 @@ function printHelp() {
   console.log(`    ${log.yellow("--skip-skills")}    ${t("cli.options.skipSkills")}`);
   console.log(`    ${log.yellow("--copy")}           ${t("cli.options.copy")}`);
   console.log(`    ${log.yellow("--fail-fast")}      ${t("cli.options.failFast")}`);
+  console.log(`    ${log.yellow("--set-default-entry")} ${log.dim("<agent>")}   Set the OpenClaw default entry (chat, watch, main)`);
+  console.log(`    ${log.yellow("--keep-main")}      Keep OpenClaw's default entry on main`);
   console.log(`    ${log.yellow("--json")}           ${t("cli.options.json")}`);
   console.log(`    ${log.yellow("--verbose")}        ${t("cli.options.verbose")}`);
   console.log();
   console.log(`  ${log.bold(t("cli.examples"))}`);
   console.log();
   console.log(`    ${log.dim("$")} jinyiwei install /path/to/openclaw/workspace`);
+  console.log(`    ${log.dim("$")} jinyiwei setup /path/to/openclaw/workspace`);
   console.log(`    ${log.dim("$")} jinyiwei install /path/to/workspace --dry-run`);
+  console.log(`    ${log.dim("$")} jinyiwei configure`);
+  console.log(`    ${log.dim("$")} jinyiwei configure --set-default-entry chat`);
+  console.log(`    ${log.dim("$")} jinyiwei start-guide`);
   console.log(`    ${log.dim("$")} jinyiwei init`);
   console.log();
 }
@@ -87,6 +103,26 @@ switch (command) {
 
   case "install":
     exitCode = installCommand(args);
+    break;
+
+  case "setup":
+    exitCode = await setupCommand(args);
+    break;
+
+  case "configure":
+    exitCode = await configureCommand(args);
+    break;
+
+  case "doctor":
+    exitCode = doctorCommand(args);
+    break;
+
+  case "verify":
+    exitCode = verifyCommand(args);
+    break;
+
+  case "start-guide":
+    exitCode = startGuideCommand(args);
     break;
 
   case "uninstall":

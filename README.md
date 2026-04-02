@@ -19,6 +19,27 @@ Multi-agent systems without governance quickly become chaotic — agents talk to
 - **Full audit trail** — every dispatch, approval, rejection, and result is logged with structured templates
 - **Markdown-as-code** — all governance rules, agent charters, and templates are plain markdown files, version-controlled and validated by CI
 
+## Beginner Path
+
+If you do not know OpenClaw yet, use Jinyiwei like this:
+
+```bash
+npm install -g @yrzhao/jinyiwei
+jinyiwei setup /path/to/openclaw/workspace
+```
+
+After setup, the recommended next commands are:
+
+```bash
+jinyiwei status
+jinyiwei doctor
+jinyiwei verify
+jinyiwei start-guide
+```
+
+`setup` is the beginner-friendly path. `install` still exists for advanced or scripted installs.
+By default, `setup` aligns the OpenClaw entry to `ChatAgent` so beginners can start there immediately. If you want to switch later, run `jinyiwei configure --set-default-entry chat`, `jinyiwei configure --set-default-entry watch`, or `jinyiwei configure --keep-main`.
+
 ## Architecture
 
 ```
@@ -58,18 +79,23 @@ Install globally:
 
 ```bash
 npm install -g @yrzhao/jinyiwei
-jinyiwei install /path/to/openclaw/workspace
+jinyiwei setup /path/to/openclaw/workspace
 ```
 
 Or use without installing:
 
 ```bash
-npx @yrzhao/jinyiwei install /path/to/openclaw/workspace
+npx @yrzhao/jinyiwei setup /path/to/openclaw/workspace
 ```
 
 ## CLI Commands
 
 ```
+jinyiwei setup                 Beginner-friendly install + configure + verify flow
+jinyiwei configure             Configure Jinyiwei models, channels, and entry points
+jinyiwei doctor                Diagnose installation, agents, plugin, and channels
+jinyiwei verify                Verify the governance flow is ready to use
+jinyiwei start-guide           Show the first-run guide after setup
 jinyiwei install <workspace>   Install Jinyiwei into an OpenClaw workspace
 jinyiwei uninstall             Uninstall Jinyiwei plugin from OpenClaw
 jinyiwei validate              Validate all governance files
@@ -93,17 +119,22 @@ Install options:
 Examples:
 
 ```bash
+jinyiwei setup /path/to/workspace                # recommended first run
+jinyiwei doctor                                  # troubleshoot OpenClaw integration
+jinyiwei verify                                  # confirm the governance flow
+jinyiwei configure --set-default-entry chat      # switch the default OpenClaw entry to ChatAgent
 jinyiwei install /path/to/workspace --dry-run    # preview changes
 jinyiwei install /path/to/workspace --skip-skills # plugin only
 jinyiwei uninstall                                # remove plugin
 jinyiwei validate                                 # check governance integrity
 jinyiwei status                                   # show current config
 jinyiwei init                                     # configure interactively
+jinyiwei start-guide                              # learn the first use flow
 ```
 
 ## Configuration
 
-Jinyiwei's project-level governance config lives in `jinyiwei.config.json`. Run `jinyiwei init` for interactive setup, or edit the file directly. `openclaw.plugin.json` remains the plugin manifest and runtime schema exposed to OpenClaw.
+Jinyiwei's project-level governance config lives in `jinyiwei.config.json`. Run `jinyiwei setup` for the beginner-friendly path, `jinyiwei configure` or `jinyiwei init` for interactive changes, or edit the file directly. `openclaw.plugin.json` remains the plugin manifest and runtime schema exposed to OpenClaw.
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
@@ -174,6 +205,20 @@ test/                             Unit tests (node:test)
 - Every internal agent must return work with its own response template
 - Every action must be justified by markdown control files
 - Installing Jinyiwei also installs the skills listed in `skills_list.md`
+
+## What Happens After Setup
+
+Jinyiwei creates a visible governance layer around OpenClaw:
+
+- `ChatAgent` receives user requests, breaks them down, and dispatches work
+- `WatchAgent` reviews each dispatch and blocks unsafe or unsupported actions
+- `CodeAgent`, `ReviewAgent`, `TestAgent`, and `UIAgent` stay internal and do not face the user directly
+- `doctor` tells you what is misconfigured
+- `verify` tells you whether the flow is ready for real use
+- `start-guide` explains what to ask first if you are new
+- `configure --set-default-entry chat` lets you bring OpenClaw back to the Jinyiwei entry flow at any time
+
+For a complete usage guide from installation through daily operation, see **[USAGE_GUIDE.md](./USAGE_GUIDE.md)**.
 
 ## Preinstalled Skills
 

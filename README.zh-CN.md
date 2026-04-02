@@ -9,6 +9,27 @@
 
 > OpenClaw 的治理、监督与 Markdown 驱动的代理层级控制插件。
 
+## 新手路径
+
+如果你还不熟悉 OpenClaw，直接按下面做：
+
+```bash
+npm install -g @yrzhao/jinyiwei
+jinyiwei setup /path/to/openclaw/workspace
+```
+
+配置完成后，推荐继续执行：
+
+```bash
+jinyiwei status
+jinyiwei doctor
+jinyiwei verify
+jinyiwei start-guide
+```
+
+`setup` 是面向小白的主路径，`install` 仍然保留给高级用户或脚本场景。
+默认情况下，`setup` 会把 OpenClaw 的入口对齐到 `ChatAgent`，让新手装完就能直接从锦衣卫入口开始使用。如果后面想切换，可以执行 `jinyiwei configure --set-default-entry chat`、`jinyiwei configure --set-default-entry watch` 或 `jinyiwei configure --keep-main`。
+
 ## 为什么需要 Jinyiwei？
 
 多代理系统如果缺乏治理，很快就会陷入混乱 — 代理随意与用户对话、绕过审批、做出无法审计的决策。**Jinyiwei**（锦衣卫）通过强制执行严格、可审计的层级结构来解决这个问题：
@@ -58,18 +79,23 @@
 
 ```bash
 npm install -g @yrzhao/jinyiwei
-jinyiwei install /path/to/openclaw/workspace
+jinyiwei setup /path/to/openclaw/workspace
 ```
 
 免安装使用：
 
 ```bash
-npx @yrzhao/jinyiwei install /path/to/openclaw/workspace
+npx @yrzhao/jinyiwei setup /path/to/openclaw/workspace
 ```
 
 ## CLI 命令
 
 ```
+jinyiwei setup                 面向小白的一键安装 + 配置 + 验证流程
+jinyiwei configure             配置 Jinyiwei 的模型、渠道和入口
+jinyiwei doctor                诊断安装、代理、插件和渠道状态
+jinyiwei verify                验证治理流程是否已经可用
+jinyiwei start-guide           显示安装后的第一次使用指南
 jinyiwei install <workspace>   将 Jinyiwei 安装到 OpenClaw 工作区
 jinyiwei uninstall             从 OpenClaw 卸载 Jinyiwei 插件
 jinyiwei validate              校验所有治理文件
@@ -93,17 +119,22 @@ jinyiwei help                  显示帮助
 示例：
 
 ```bash
+jinyiwei setup /path/to/workspace                # 推荐的新手首选路径
+jinyiwei doctor                                  # 排查 OpenClaw 集成问题
+jinyiwei verify                                  # 确认治理流程可用
+jinyiwei configure --set-default-entry chat      # 把 OpenClaw 默认入口切到 ChatAgent
 jinyiwei install /path/to/workspace --dry-run    # 预览变更
 jinyiwei install /path/to/workspace --skip-skills # 仅安装插件
 jinyiwei uninstall                                # 移除插件
 jinyiwei validate                                 # 检查治理完整性
 jinyiwei status                                   # 查看当前配置
 jinyiwei init                                     # 交互式配置
+jinyiwei start-guide                              # 学习第一次使用流程
 ```
 
 ## 配置
 
-Jinyiwei 的项目级治理配置位于 `jinyiwei.config.json`。运行 `jinyiwei init` 进行交互式设置，或直接编辑该文件。`openclaw.plugin.json` 仍然负责插件清单和提供给 OpenClaw 的运行时 schema。
+Jinyiwei 的项目级治理配置位于 `jinyiwei.config.json`。运行 `jinyiwei setup` 走面向小白的完整流程，`jinyiwei configure` 或 `jinyiwei init` 进行交互式修改，或直接编辑该文件。`openclaw.plugin.json` 仍然负责插件清单和提供给 OpenClaw 的运行时 schema。
 
 | 参数 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
@@ -135,6 +166,20 @@ Jinyiwei 的项目级治理配置位于 `jinyiwei.config.json`。运行 `jinyiwe
 - 每个内部代理必须使用各自的响应模板返回工作
 - 每个操作必须由 Markdown 控制文件提供依据
 - 安装 Jinyiwei 时会同时安装 `skills_list.md` 中列出的技能
+
+## 安装后会发生什么
+
+Jinyiwei 会在 OpenClaw 上建立一层清晰的治理边界：
+
+- `ChatAgent` 负责接收用户需求、拆解任务、派发工作
+- `WatchAgent` 负责审查每个派发，阻止高风险或不支持的动作
+- `CodeAgent`、`ReviewAgent`、`TestAgent`、`UIAgent` 只在内部协作，不直接面对用户
+- `doctor` 用来发现哪里配置错了
+- `verify` 用来确认整个流程是否真的可用
+- `start-guide` 用来告诉新用户第一句应该怎么说
+- `configure --set-default-entry chat` 可以随时把 OpenClaw 入口重新切回锦衣卫主流程
+
+完整使用指南（从安装到日常操作）请参阅 **[USAGE_GUIDE.zh-CN.md](./USAGE_GUIDE.zh-CN.md)**。
 
 ## 预装技能
 
