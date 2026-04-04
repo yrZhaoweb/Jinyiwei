@@ -12,10 +12,31 @@ import {
   buildAuditEntry,
   buildDispatchPacket,
   buildRejectionDecision,
-} from "./lib/runtime-documents.mjs";
+  redactAuditParams,
+} from "./lib/governance/documents.mjs";
 import { loadRuntimeRegistry } from "./lib/governance/runtime-registry.mjs";
 
 export const id = PLUGIN_ID;
+
+/**
+ * Defensive length validation helper for tool parameters.
+ * Re-validates strings even if OpenClaw runtime does not enforce maxLength.
+ * @param {Record<string, any>} params
+ * @param {string[]} keys
+ * @param {{ [key: string]: number }} limits
+ * @returns {{ valid: boolean, field?: string }}
+ */
+function validateParamLengths(params, keys, limits) {
+  for (const key of keys) {
+    const limit = limits[key];
+    if (limit == null) continue;
+    const value = params[key];
+    if (typeof value === "string" && value.length > limit) {
+      return { valid: false, field: key };
+    }
+  }
+  return { valid: true };
+}
 
 /**
  * @param {any} api
@@ -106,6 +127,13 @@ export default function register(api) {
       required: ["packet_id", "target_agent", "action_type", "risk_hint", "goal"],
     },
     async execute(_id, params) {
+      const validation = validateParamLengths(params,
+        ["packet_id", "target_agent", "action_type", "risk_hint", "goal", "scope", "inputs", "constraints", "expected_outputs"],
+        { packet_id: 128, target_agent: 64, action_type: 128, risk_hint: 64, goal: 2048, scope: 2048, inputs: 4096, constraints: 2048, expected_outputs: 2048 }
+      );
+      if (!validation.valid) {
+        return { content: [{ type: "text", text: `Invalid parameter: ${validation.field} exceeds length limit` }] };
+      }
       return {
         content: [{
           type: "text",
@@ -143,6 +171,13 @@ export default function register(api) {
       required: ["decision_id", "packet_id", "target_agent", "action_type", "risk_hint", "goal"],
     },
     async execute(_id, params) {
+      const validation = validateParamLengths(params,
+        ["decision_id", "acting_agent", "packet_id", "target_agent", "action_type", "risk_hint", "goal", "scope", "inputs", "constraints", "expected_outputs"],
+        { decision_id: 128, acting_agent: 64, packet_id: 128, target_agent: 64, action_type: 128, risk_hint: 64, goal: 2048, scope: 2048, inputs: 4096, constraints: 2048, expected_outputs: 2048 }
+      );
+      if (!validation.valid) {
+        return { content: [{ type: "text", text: `Invalid parameter: ${validation.field} exceeds length limit` }] };
+      }
       const { registry } = runtimeState(api);
       const packet = buildPacket(params, config.bossTitle);
       const review = reviewDispatch({
@@ -207,6 +242,13 @@ export default function register(api) {
       required: ["decision_id", "packet_id", "action_type", "risk_level", "reason"],
     },
     async execute(_id, params) {
+      const validation = validateParamLengths(params,
+        ["decision_id", "packet_id", "action_type", "risk_level", "reason", "required_follow_up"],
+        { decision_id: 128, packet_id: 128, action_type: 128, risk_level: 64, reason: 2048, required_follow_up: 1024 }
+      );
+      if (!validation.valid) {
+        return { content: [{ type: "text", text: `Invalid parameter: ${validation.field} exceeds length limit` }] };
+      }
       return {
         content: [{
           type: "text",
@@ -239,6 +281,13 @@ export default function register(api) {
       required: ["decision_id", "packet_id", "action_type", "risk_level", "reason", "violated_rule"],
     },
     async execute(_id, params) {
+      const validation = validateParamLengths(params,
+        ["decision_id", "packet_id", "action_type", "risk_level", "reason", "violation_type", "violated_rule", "remediation", "suggested_alternative"],
+        { decision_id: 128, packet_id: 128, action_type: 128, risk_level: 64, reason: 2048, violation_type: 256, violated_rule: 512, remediation: 1024, suggested_alternative: 1024 }
+      );
+      if (!validation.valid) {
+        return { content: [{ type: "text", text: `Invalid parameter: ${validation.field} exceeds length limit` }] };
+      }
       return {
         content: [{
           type: "text",
@@ -270,13 +319,21 @@ export default function register(api) {
       required: ["audit_id", "acting_agent", "action_type", "output_or_rejection"],
     },
     async execute(_id, params) {
+      const validation = validateParamLengths(params,
+        ["audit_id", "packet_id", "decision_id", "acting_agent", "action_type", "risk_level", "rationale", "supervising_decision", "output_or_rejection"],
+        { audit_id: 128, packet_id: 128, decision_id: 128, acting_agent: 64, action_type: 128, risk_level: 64, rationale: 4096, supervising_decision: 32, output_or_rejection: 4096 }
+      );
+      if (!validation.valid) {
+        return { content: [{ type: "text", text: `Invalid parameter: ${validation.field} exceeds length limit` }] };
+      }
+      const redacted = redactAuditParams(params);
       const entry = buildAuditEntry({
-        ...params,
-        packet_id: params.packet_id || "N/A",
-        decision_id: params.decision_id || "N/A",
-        risk_level: params.risk_level || "N/A",
-        rationale: params.rationale || "N/A",
-        supervising_decision: params.supervising_decision || "N/A",
+        ...redacted,
+        packet_id: redacted.packet_id || "N/A",
+        decision_id: redacted.decision_id || "N/A",
+        risk_level: redacted.risk_level || "N/A",
+        rationale: redacted.rationale || "N/A",
+        supervising_decision: redacted.supervising_decision || "N/A",
       });
       const { workspace } = runtimeState(api);
 

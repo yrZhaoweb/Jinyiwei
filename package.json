@@ -44,7 +44,7 @@
     "sync:version": "node ./scripts/sync-version.mjs",
     "validate": "node ./scripts/validate-jinyiwei.mjs",
     "test": "node --test --test-concurrency=1 test/*.test.mjs",
-    "prepublishOnly": "node ./scripts/sync-version.mjs && node ./scripts/sync-skills-manifest.mjs && node ./scripts/validate-jinyiwei.mjs"
+    "prepublishOnly": "npm install && node ./scripts/sync-version.mjs && node ./scripts/sync-skills-manifest.mjs && node ./scripts/validate-jinyiwei.mjs"
   },
   "openclaw": {
     "extensions": [

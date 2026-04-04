@@ -247,7 +247,7 @@ cloc lib/ --by-file --csv
 ```
 审查维度：
 
-1. CLAUDE.md / AGENTS.md 同步
+1. CLAUDE.md 与代码同步
    - 命令列表是否最新
    - 模块描述是否准确
    - 新增模块是否已记录
@@ -266,7 +266,7 @@ cloc lib/ --by-file --csv
 
 **产出**：
 - `documentation-gap-analysis.md`
-- CLAUDE.md / AGENTS.md 更新草案
+- CLAUDE.md 更新草案
 
 ---
 

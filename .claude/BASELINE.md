@@ -22,7 +22,7 @@
 ## 二、已知问题
 
 ### P1 - 文档不同步
-- **问题**：`AGENTS.md` 和 `CLAUDE.md` 内容重复但不一致
+- **问题**：`CLAUDE.md` 内容可能与代码不一致
 - **原因**：最近增加了 `lib/governance/` 子系统、`lib/lifecycle.mjs` 等新模块
 - **影响**：ECC agent 可能基于过期文档理解项目
 - **修复**：同步 CLAUDE.md

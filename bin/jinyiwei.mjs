@@ -45,9 +45,9 @@ function printHelp() {
   console.log(`    ${log.yellow("--skip-skills")}    ${t("cli.options.skipSkills")}`);
   console.log(`    ${log.yellow("--copy")}           ${t("cli.options.copy")}`);
   console.log(`    ${log.yellow("--fail-fast")}      ${t("cli.options.failFast")}`);
-  console.log(`    ${log.yellow("--set-default-entry")} ${log.dim("<agent>")}   Set the OpenClaw default entry (chat, watch, main)`);
-  console.log(`    ${log.yellow("--keep-main")}      Keep OpenClaw's default entry on main`);
-  console.log(`    ${log.yellow("--rename-agent")}    Rename ChatAgent and WatchAgent interactively`);
+  console.log(`    ${log.yellow("--set-default-entry")} ${log.dim("<agent>")}   ${t("cli.options.setDefaultEntry")}`);
+  console.log(`    ${log.yellow("--keep-main")}      ${t("cli.options.keepMain")}`);
+  console.log(`    ${log.yellow("--rename-agent")}    ${t("cli.options.renameAgent")}`);
   console.log(`    ${log.yellow("--json")}           ${t("cli.options.json")}`);
   console.log(`    ${log.yellow("--verbose")}        ${t("cli.options.verbose")}`);
   console.log();

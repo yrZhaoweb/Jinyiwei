@@ -158,8 +158,16 @@ lib/
   commands/                       CLI command modules
     install.mjs                   install command
     uninstall.mjs                 uninstall command
+    validate.mjs                  validate command
+    sync.mjs                      sync skills command
     status.mjs                    status command
     init.mjs                      interactive init command
+    configure.mjs                 configure models/channels/entry
+    setup.mjs                     beginner-friendly setup wizard
+    doctor.mjs                    diagnostics command
+    verify.mjs                    governance readiness verification
+    start-guide.mjs               first-run guide
+    update.mjs                    self-update command
   validators/                     Modular validation logic
     files.mjs                     Required file checks
     skills.mjs                    Skills manifest sync check

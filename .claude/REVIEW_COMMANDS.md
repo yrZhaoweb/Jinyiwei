@@ -83,8 +83,7 @@ npm run validate            # must show ok: true
 /agent doc-updater
 审查并更新 Jinyiwei 文档：
 1. CLAUDE.md 与实际代码对比
-2. AGENTS.md 与 CLAUDE.md 合并建议
-3. 命令帮助文本完整性
+2. 命令帮助文本完整性
 4. README 是否需要更新
 ```
 

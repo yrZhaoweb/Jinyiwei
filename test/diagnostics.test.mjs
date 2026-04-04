@@ -1,9 +1,15 @@
-import { describe, it } from "node:test";
+import { describe, it, before, after } from "node:test";
 import assert from "node:assert/strict";
 import {
   buildDiagnosticReport,
   buildVerificationReport,
 } from "../lib/diagnostics.mjs";
+import { setLocale, getLocale } from "../lib/i18n.mjs";
+
+// Force English locale for deterministic test assertions
+let savedLocale;
+before(() => { savedLocale = getLocale(); setLocale("en"); });
+after(() => { setLocale(savedLocale); });
 
 describe("diagnostics", () => {
   describe("buildDiagnosticReport", () => {

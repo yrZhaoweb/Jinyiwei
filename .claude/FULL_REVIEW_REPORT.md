@@ -16,7 +16,7 @@
 | 重构 | ⚠️ P1 | ~~循环依赖~~（已排除）、死代码、大模块、共享工具缺失 |
 | 测试 | ❌ P2 | 覆盖率 ~45%、核心命令无测试、openclaw.mjs 难以测试 |
 | DevOps | ⚠️ P1 | sync-version.mjs 无错误处理、CI 无 npm 缓存 |
-| 文档 | ⚠️ P2 | AGENTS.md 已删除 ✅、README 需更新 |
+| 文档 | ✅ | CLAUDE.md 已同步 |
 
 **基线**：94/94 测试通过 ✅，npm run validate 通过 ✅
 
@@ -28,7 +28,7 @@
 |---|------|------|---------|
 | 1 | 删除 AGENTS.md | ✅ 已完成 | 文件已删除 |
 | 2 | JSON.parse 无保护（6处） | ✅ 已完成 | 添加 try/catch |
-| 3 | 循环依赖 | ⚠️ 已排查 | node --check 无问题，非实际循环 |
+| 3 | 循环依赖 | ✅ 已完成 | groups.mjs 改从 constants.mjs 直接导入 |
 
 ### JSON.parse 修复详情
 
@@ -234,9 +234,7 @@ export function hasOpenClaw() {
 ## 六、文档审查报告（doc-updater）
 
 ### 必须删除
-**AGENTS.md** — 应立即删除
-- 引用 "Codex" 而非 "Claude Code"
-- 7-step 安装流程（实际 8-step）
+**AGENTS.md** — ✅ 已删除（见上方问题 #1）
 - 缺少新命令（setup, configure, doctor, verify, start-guide）
 - 缺少新模块（lib/governance/ 等）
 
@@ -261,7 +259,7 @@ export function hasOpenClaw() {
 |---|------|---------|------|
 | 1 | JSON.parse 无保护 | 添加 try/catch | 防止崩溃 |
 | 2 | 循环依赖 | 改用直接常量导入 | 构建稳定性 |
-| 3 | 删除 AGENTS.md | 直接删除 | 文档一致性 |
+| 3 | 删除 AGENTS.md | ✅ 已完成 | 文件已删除 |
 
 ### 下次发布前（P1，两周内）
 
@@ -290,9 +288,9 @@ export function hasOpenClaw() {
 ## 八、快速修复命令
 
 ```bash
-# 1. 删除 AGENTS.md
-rm AGENTS.md
-
+# 1. 删除 AGENTS.md ✅
+# rm AGENTS.md  (已执行)
+```
 # 2. 运行安全检查
 grep -n "JSON.parse(fs.readFileSync" lib/**/*.mjs
 

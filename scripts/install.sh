@@ -7,4 +7,5 @@ cd "${ROOT}"
 node ./scripts/sync-skills-manifest.mjs
 node ./scripts/validate-jinyiwei.mjs
 
-node "${ROOT}/scripts/install-openclaw.mjs" "$@"
+# Run the install command with any passed arguments
+node ./bin/jinyiwei.mjs install "$@"

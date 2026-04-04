@@ -9,7 +9,7 @@ import {
   renderAuditEntry,
   renderDispatchPacket,
   renderRejectionDecision,
-} from "../lib/runtime-documents.mjs";
+} from "../lib/governance/documents.mjs";
 
 describe("runtime documents", () => {
   it("renders governance packet and decision documents", () => {
