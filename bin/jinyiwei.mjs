@@ -16,6 +16,10 @@ import { validateCommand } from "../lib/commands/validate.mjs";
 import { verifyCommand } from "../lib/commands/verify.mjs";
 import { syncCommand } from "../lib/commands/sync.mjs";
 import { updateCommand } from "../lib/commands/update.mjs";
+import { modelCommand } from "../lib/commands/model.mjs";
+import { channelCommand } from "../lib/commands/channel.mjs";
+import { chatCommand } from "../lib/commands/chat.mjs";
+import { reportCommand } from "../lib/commands/report.mjs";
 import * as log from "../lib/log.mjs";
 
 const pkg = JSON.parse(fs.readFileSync(resolve("package.json"), "utf8"));
@@ -36,6 +40,10 @@ function printHelp() {
   console.log(`    ${log.cyan("jinyiwei status")}                ${t("cli.commands.status")}`);
   console.log(`    ${log.cyan("jinyiwei init")}                  ${t("cli.commands.init")}`);
   console.log(`    ${log.cyan("jinyiwei update")}               ${t("cli.commands.update")}`);
+  console.log(`    ${log.cyan("jinyiwei model")}                ${t("cli.commands.model")}`);
+  console.log(`    ${log.cyan("jinyiwei channel")}              ${t("cli.commands.channel")}`);
+  console.log(`    ${log.cyan("jinyiwei chat")}                 ${t("cli.commands.chat")}`);
+  console.log(`    ${log.cyan("jinyiwei report")}               ${t("cli.commands.report")}`);
   console.log(`    ${log.cyan("jinyiwei help")}                  ${t("cli.commands.help")}`);
   console.log();
   console.log(`  ${log.bold(t("cli.installOptions"))}`);
@@ -60,6 +68,11 @@ function printHelp() {
   console.log(`    ${log.dim("$")} jinyiwei configure --set-default-entry chat`);
   console.log(`    ${log.dim("$")} jinyiwei start-guide`);
   console.log(`    ${log.dim("$")} jinyiwei init`);
+  console.log(`    ${log.dim("$")} jinyiwei model list`);
+  console.log(`    ${log.dim("$")} jinyiwei model add chat --provider anthropic --model-id claude-sonnet-4-6`);
+  console.log(`    ${log.dim("$")} jinyiwei channel list`);
+  console.log(`    ${log.dim("$")} jinyiwei chat chat`);
+  console.log(`    ${log.dim("$")} jinyiwei report dev`);
   console.log();
 }
 
@@ -138,6 +151,22 @@ switch (command) {
 
   case "update":
     exitCode = updateCommand(args);
+    break;
+
+  case "model":
+    exitCode = await modelCommand(args);
+    break;
+
+  case "channel":
+    exitCode = await channelCommand(args);
+    break;
+
+  case "chat":
+    exitCode = await chatCommand(args);
+    break;
+
+  case "report":
+    exitCode = await reportCommand(args);
     break;
 
   default:

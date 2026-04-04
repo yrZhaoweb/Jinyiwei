@@ -1,14 +1,45 @@
 {
   "bossTitle": "Boss",
   "watchSelfTitle": "WatchAgent",
+  "chatAgentName": "ChatAgent",
+  "watchAgentName": "WatchAgent",
   "approvalMode": "hybrid",
   "models": {
-    "chat": "",
-    "watch": "",
+    "chat": {
+      "provider": "openai",
+      "baseURL": "",
+      "apiKey": "",
+      "modelId": "gpt-4o"
+    },
+    "watch": {
+      "provider": "openai",
+      "baseURL": "",
+      "apiKey": "",
+      "modelId": "gpt-4o"
+    },
     "groups": {
-      "dev": "",
-      "content": ""
+      "content": "",
+      "dev": ""
     }
   },
-  "externalChannels": ["feishu", "telegram"]
+  "externalChannels": [
+    "feishu",
+    "telegram"
+  ],
+  "channels": {
+    "feishu": {
+      "webhookUrl": "https://open.feishu.cn/other",
+      "botToken": "",
+      "appId": "",
+      "appSecret": ""
+    },
+    "telegram": {
+      "botToken": "123456:TEST",
+      "apiBase": ""
+    }
+  },
+  "channelAgents": {
+    "feishu": "watch",
+    "telegram": "watch"
+  }
 }

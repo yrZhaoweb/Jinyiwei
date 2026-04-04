@@ -158,14 +158,15 @@ describe("runtime-registry agent model resolution", () => {
     }
   });
 
-  it("model is a string", () => {
+  it("model is a string or an object", () => {
     const registry = loadRuntimeRegistry();
 
     for (const agent of registry) {
-      assert.strictEqual(
-        typeof agent.model,
-        "string",
-        `${agent.name} model should be string`
+      const isString = typeof agent.model === "string";
+      const isObject = agent.model && typeof agent.model === "object" && !Array.isArray(agent.model);
+      assert.ok(
+        isString || isObject,
+        `${agent.name} model should be string or object, got ${typeof agent.model}`
       );
     }
   });
